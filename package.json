@@ -1,0 +1,16 @@
+{
+  "name": "tony-knowledge-garden",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build:data": "python3 scripts/build_content.py",
+    "dev": "npm run build:data && vite --host 127.0.0.1 --port 4173 --strictPort",
+    "build": "npm run build:data && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^6.1.0"
+  }
+}
