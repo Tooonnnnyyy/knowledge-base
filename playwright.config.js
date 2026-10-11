@@ -14,7 +14,10 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:4175',
     viewport: { width: 1440, height: 960 },
     reducedMotion: 'reduce',
-    launchOptions: { executablePath, chromiumSandbox: true },
+    // GitHub-hosted Ubuntu runners disable unprivileged user namespaces, so
+    // Chromium cannot start with its sandbox there. Keep the safer default
+    // locally and opt out only in the isolated CI runner.
+    launchOptions: { executablePath, chromiumSandbox: !process.env.CI },
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },
