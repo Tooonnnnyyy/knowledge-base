@@ -1,25 +1,35 @@
 ---
-title: Define the Dataset Before Training
-date: 2026-09-28
-type: note
-tags: [Data, Engineering, AI]
-summary: Prediction unit, input window, target, and leakage rules define what a model is actually learning.
-links: [reproducible-simulation, synthetic-data]
+title: "Define the Dataset Before Training"
+slug: dataset-definition
+date: 2026-09-30
+updated: 2026-10-10
+type: concept
+public: true
+tags: [Data, Model evaluation]
+summary: "Prediction units, labels, splits and transformation lineage determine what a model learns."
+links: [stochastic-simulation-map, model-evaluation, safe-model-release]
 ---
-# Define the Dataset Before Training
 
 ## English
 
-Before training a model, define the prediction unit, input window, target, and the moment when the prediction is allowed to exist. These choices determine whether a feature is available at decision time.
+### Define the prediction problem
 
-A field that appears predictive can still be invalid if it contains information from the future. Writing the data contract first makes training-serving skew and leakage easier to detect.
+Before training, specify the **prediction unit**, input `x`, target `y`, label rules and metadata. When annotators disagree, a majority vote is not an automatic solution. First check whether the target is ambiguous, the input lacks necessary information or the case itself is uncertain.
 
-The model is only one part of the system. The dataset definition is where the meaning of the prediction begins.
+### Human performance and traceability
+
+Human-level performance, or **HLP**, is useful only when a person can reasonably infer the same target from the same input. It can help estimate room for improvement. It does not prove production safety or business value.
+
+A reproducible pipeline preserves sources, validation, deterministic preprocessing, label versions, metadata and transformation lineage.
+
+### Split the evidence correctly
+
+Training data fits the model. Development data selects the approach. Test data defines the final evidence boundary. Related examples crossing splits create leakage—for example, nearly identical photos of the same phone appearing in both training and test data.
 
 ## 中文
 
-训练模型前，要先定义 prediction unit、input window、target，以及预测可以发生的时间点。这些选择决定某个 feature 在真实决策时是否可用。
+在训练前定义 prediction unit、input x、target y、label rule 和 metadata。标签分歧不是自动多数投票的理由：应判断是 y 模糊、x 不足，还是案例本身确实不确定。
 
-一个看似有预测力的字段，如果包含未来信息，仍然是不合法的。先写数据契约，能更容易发现 training-serving skew 和 leakage。
+HLP 只在 human 可根据同一 x 合理判断 y 时有用；它能估计 improvement room，不能证明生产安全或商业效果。可复现 pipeline 必须保留 source、validation、deterministic preprocessing、label version、metadata 与 transformation lineage。
 
-模型只是系统的一部分，预测的意义从数据定义开始。
+Train 用于拟合，dev 用于选择方案，test 是最终证据边界。相关样本跨 split 会造成 leakage，例如同一部手机的近似照片同时进入 train/test。

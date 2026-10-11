@@ -1,0 +1,14 @@
+[
+  { "id": "Systems", "label": "Systems", "parent": null, "description": "How interactions, feedback and constraints shape a system over time." },
+  { "id": "AI", "label": "AI", "parent": null, "description": "Learning systems, recommendation and the design of capable agents." },
+  { "id": "Engineering", "label": "Engineering", "parent": null, "description": "Architecture, releases and evidence for reliable software." },
+  { "id": "Data", "label": "Data", "parent": null, "description": "What observations mean, how they are collected and what they can support." },
+  { "id": "Product", "label": "Product", "parent": null, "description": "Framing useful problems, evaluating outcomes and making tradeoffs." },
+  { "id": "Thinking", "label": "Thinking", "parent": null, "description": "Judgment, critical reflection and building a connected understanding." },
+  { "id": "Probability", "label": "Probability", "parent": "Systems", "description": "Random variables, distributions and the mathematics of uncertainty." },
+  { "id": "Simulation", "label": "Simulation", "parent": "Systems", "description": "Turning assumptions into experiments that can be repeated and inspected." },
+  { "id": "Recommendation", "label": "Recommendation", "parent": "AI", "description": "Exposure, preferences and the feedback between a policy and observed behavior." },
+  { "id": "Agent systems", "label": "Agent systems", "parent": "AI", "description": "Delegation, coordination, evaluation and recovery for agents that act." },
+  { "id": "Model evaluation", "label": "Model evaluation", "parent": "Data", "description": "Metrics, thresholds and the limits of evidence from a model or experiment." },
+  { "id": "Knowledge practice", "label": "Knowledge practice", "parent": "Thinking", "description": "Capturing, refining and connecting ideas so they can evolve." }
+]

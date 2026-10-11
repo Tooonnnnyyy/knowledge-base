@@ -1,25 +1,59 @@
 ---
-title: Design Learning as a System
-date: 2026-09-27
-type: reflection
-tags: [Learning, AI, Product]
-summary: Progress becomes visible when learning has bounded questions, artifacts, and feedback.
-links: [critical-thinking, reproducible-simulation, ai-product-architecture]
+title: "From Conversation to Connected Knowledge"
+slug: designing-learning-systems
+date: 2026-10-10
+updated: 2026-10-10
+type: practice
+public: true
+tags: [Thinking, Knowledge practice]
+summary: "Capture, filter, distill, link and map an idea so it becomes part of a growing knowledge system."
+links: [critical-thinking, human-value-in-agent-era, ai-product-development]
 ---
-# Design Learning as a System
 
 ## English
 
-Learning becomes easier to continue when it has a bounded question, a small artifact, and a feedback point. The artifact can be a working prototype, a written explanation, or a failed experiment with a clear lesson.
+### Turn a useful conversation into retrievable knowledge
 
-A long list of technologies is not a learning system. A system connects a question to an action, records what happened, and uses the result to choose the next step.
+An idea becomes easier to revisit when it is distilled into a small note and connected to an existing topic. A knowledge system needs a repeatable path from conversation to organized memory.
 
-This is also why a personal knowledge graph should show progress, not only accumulate notes. Links should help a visitor see how ideas lead to experiments and how experiments revise ideas.
+### Five steps
+
+1. **Capture:** preserve the important sentences, questions and judgments in the original expression.
+2. **Filter:** remove repetition, temporary reactions and details with little reuse value.
+3. **Distill:** separate concepts, structures, open questions and methods.
+4. **Link:** connect the note to nearby ideas instead of leaving an isolated archive.
+5. **Map:** update the entry points so the idea can be found again.
+
+### What deserves a durable note
+
+Prioritize reusable concepts, methods that change decisions, recurring mental models and important unresolved questions. Temporary errands and details that make sense only in one situation usually do not need a permanent public article.
+
+### Give each note a role
+
+A **concept** answers what an idea means. An **architecture** explains how parts are organized. An **open question** records what remains uncertain. Topic maps connect these roles without flattening every note into the same level.
+
+This creates a learning system that can grow one useful connection at a time.
 
 ## 中文
 
-当学习有一个边界清楚的问题、一个小型产物和一个反馈点时，更容易持续。产物可以是可运行原型、书面解释，或一个带有清晰教训的失败实验。
+### 把一次有价值的对话变成可检索的知识
 
-技术清单不是学习系统。系统应该把问题连接到行动，记录发生了什么，再用结果选择下一步。
+把想法提炼成小笔记，并连接到已有主题，之后就更容易重新找到。知识系统需要一条从对话到有组织记忆的稳定路径。
 
-这也是个人知识图谱不应只堆积笔记的原因。链接应该帮助访客看见想法如何导向实验，以及实验如何反过来修正想法。
+### 五个步骤
+
+1. **Capture：捕捉。** 保留原始表达中的关键句子、问题与判断。
+2. **Filter：筛选。** 去掉重复、即时情绪与低复用细节。
+3. **Distill：提炼。** 区分概念、结构、待解问题与方法。
+4. **Link：连接。** 接到已有主题上，避免孤立存档。
+5. **Map：更新地图。** 维护入口，让知识之后仍能被检索。
+
+### 什么值得长期保留
+
+优先保留可复用概念、影响决策的方法论、反复出现的认知框架，以及重要但尚未想清楚的问题。临时事务和只在单一场景成立的细节，通常不需要成为永久公开文章。
+
+### 给笔记明确的角色
+
+**概念**回答“是什么”；**架构**解释“如何组织”；**问题**记录“哪里仍不确定”。主题地图把这些角色连接起来，而不是把所有笔记压成同一个层级。
+
+这样，学习系统就可以随着每一条有用的连接持续生长。

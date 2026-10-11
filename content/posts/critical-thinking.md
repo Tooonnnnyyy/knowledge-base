@@ -1,25 +1,58 @@
 ---
-title: Thinking Before Building
-date: 2026-10-07
-type: note
-tags: [AI, Product, Thinking]
-summary: A reliable product process starts by checking the question before optimizing the answer.
-links: [human-value-in-agent-era, ai-product-architecture]
+title: "Thinking Before Building"
+slug: critical-thinking
+date: 2026-10-10
+updated: 2026-10-10
+type: reflection
+public: true
+tags: [Thinking, AI]
+summary: "Inspect the premise and framing before letting fast execution amplify the wrong question."
+links: [stochastic-simulation-map, human-value-in-agent-era, decision-delegation]
 ---
-# Thinking Before Building
 
 ## English
 
-AI can execute quickly, but speed does not automatically correct a wrong premise. If the first question is framed badly, a highly capable system may produce a polished answer to the wrong problem.
+### Examine the question before accelerating the answer
 
-A useful habit is to separate three moves: define the decision, inspect the assumptions, and only then choose the tool. This keeps execution connected to purpose. It also creates a clear place to pause when the evidence is weak.
+AI can execute efficiently, but it does not reliably challenge a mistaken premise, framing or priority on its own. If the first question is wrong, polished execution can amplify the error.
 
-For product work, critical thinking is not a ceremonial review step. It is a small feedback loop that protects time, user trust, and the meaning of the result.
+### Questions above the task
+
+- Should the current task itself be questioned?
+- Does the system need a structural rethink instead of another patch?
+- Is the product's positioning mistaken before implementation even begins?
+
+Critical thinking is a coordinating capability in an agent system. It helps decide which task should be executed and when the direction should change.
+
+### Threads worth developing
+
+Thinking traps, task-framing errors, local versus global optimization, and authority or override mechanisms are useful next branches of this question.
 
 ## 中文
 
-AI 可以很快执行，但速度不会自动修正错误前提。如果第一个问题的 framing 就不准确，高能力系统可能只是更快地把错误问题包装成漂亮答案。
+### 核心判断
 
-一个实用习惯是把三个动作分开：先定义决策，再检查假设，最后选择工具。这样执行过程始终和目的相连，也能在证据不足时留下暂停和复核的位置。
+AI 可以高效执行，但不天然擅长主动避开错误前提、错误 framing、错误优先级。
 
-对产品工作来说，批判性思维不是形式化的审查步骤，而是保护时间、用户信任和结果意义的小型反馈回路。
+### 为什么重要
+
+如果第一问题就问错了，后面的高质量执行会放大错误，而不是修正错误。
+
+### 需要追问的问题
+
+重点可以从“能否执行”转向以下问题：
+
+- AI 会不会质疑当前任务本身？
+- AI 会不会指出应该重构而不是修补？
+- AI 会不会看出产品定位就错了？
+
+### 因此
+
+批判性思维在 agent 时代不是附加项，而是调度系统的上层能力。
+
+### 可继续展开的方向
+
+- 常见 Thinking Traps 分类
+- 任务 framing 错误
+- 局部最优与全局最优
+- authority 与 override 机制

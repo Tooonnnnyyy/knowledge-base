@@ -1,3 +1,12 @@
 node_modules
 dist
 .DS_Store
+public/data.json
+public/articles/
+public/notes/
+public/katex/
+public/sitemap.xml
+public/feed.xml
+.local/
+test-results/
+playwright-report/

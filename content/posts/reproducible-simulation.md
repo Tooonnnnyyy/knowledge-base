@@ -1,25 +1,29 @@
 ---
-title: Reproducibility Is Part of the Result
-date: 2026-10-02
-type: note
-tags: [Data, Research, Engineering]
-summary: A simulation is easier to trust when another person can rerun it and understand its inputs.
-links: [monte-carlo-uncertainty, synthetic-data]
+title: "Monte Carlo, Random Seeds and Reproducibility"
+slug: reproducible-simulation
+date: 2026-10-07
+updated: 2026-10-10
+type: glossary
+public: true
+tags: [Data, Simulation]
+summary: "A recorded seed supports repeatability while replications reveal variation."
+links: [monte-carlo-uncertainty, probability-expectation-variance, dataset-definition, stochastic-simulation-map]
 ---
-# Reproducibility Is Part of the Result
 
 ## English
 
-A result without its input definition is difficult to evaluate. For a simulation, reproducibility means naming the unit of analysis, documenting the distribution or event rule, recording the random seed, and keeping the transformation steps visible.
+Monte Carlo simulation uses random sampling to approximate a distribution, expectation or system outcome. A random seed fixes a pseudorandom sequence so an experiment can be debugged, reproduced and audited. It does not establish that the model describes reality.
 
-This is not paperwork for its own sake. It makes debugging faster and helps a team distinguish a genuine change from a changed assumption or a lucky run.
+### Repeatable, but still uncertain
 
-The same principle applies to AI products: record the version of the prompt, model, data slice, and evaluation criteria that produced an output.
+An example may begin with `SEED = 42` and use 250 replications with different, reproducible seeds for its feed, Euler and Gillespie experiments. Recording the seed makes inputs traceable; variation across replications is still part of the result.
+
+When comparing policies, decide in advance whether to use matched seeds or independent seeds. Keep that choice visible alongside parameters and metric definitions.
 
 ## 中文
 
-没有输入定义的结果很难评估。对模拟来说，可复现意味着说明分析单位、记录分布或事件规则、保存随机种子，并让变换步骤保持可见。
+Monte Carlo simulation 用随机抽样近似一个 distribution、expectation 或 system outcome。random seed 固定伪随机序列，方便 debug、复现实验和审计；它不会让模型变成现实证据，也不能消除模型中的不确定性。
 
-这不是为了增加文书工作，而是为了更快调试，让团队区分真正的改进、假设变化和一次幸运运行。
+### 示例模型
 
-同样的原则适用于 AI 产品：记录生成结果所使用的 prompt、模型、数据切片和评估标准版本。
+`SEED=42` 让 feed、Euler、Gillespie 使用可记录的输入；250 replications 使用不同但可复现的 seed。策略比较应提前决定使用 matched seeds 还是 independent seeds。

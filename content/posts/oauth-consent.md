@@ -1,25 +1,39 @@
 ---
-title: Consent Is a Product Boundary
-date: 2026-09-29
-type: principle
-tags: [Privacy, AI, Product]
-summary: Data access is trustworthy when people can understand what is requested, why it is needed, and how to revoke it.
-links: [ai-product-architecture, synthetic-data]
+title: "APIs, OAuth and the Boundary of Consent"
+slug: oauth-consent
+date: 2026-10-07
+updated: 2026-10-10
+type: concept
+public: true
+tags: [Data, Product]
+summary: "Data access depends on consent, scope and the distinction between aggregate analytics and event logs."
+links: [public-data-boundaries, synthetic-data, dataset-definition, stochastic-simulation-map]
 ---
-# Consent Is a Product Boundary
 
 ## English
 
-OAuth is not just a technical handshake. It is a product boundary where a person decides whether an application may access a specific scope of data.
+### Four different boundaries
 
-A clear consent experience explains the purpose, limits the scope, avoids surprising aggregation, and makes revocation discoverable. The system should preserve the permission decision as evidence instead of treating it as an invisible implementation detail.
+- An **API** is an interface for reading or writing service resources programmatically.
+- **OAuth** lets a person grant an application limited access without handing the application their password.
+- **Consent** is informed permission for specific data scopes and purposes.
+- **Aggregate data** summarizes activity by day, channel, account or category. It is not a per-user event log.
 
-When the product cannot explain what it will do with the data, the correct response is to narrow the request or stop.
+YouTube Analytics, Instagram Professional Insights, TikTok Research and data-portability services expose different data. Approval, scope, account type and regional eligibility need to be checked for each platform.
+
+### In a simulation study
+
+A real API can be an extension to a synthetic-user experiment. It does not replace a clear model or automatically provide a user's recommendation history. Account-level aggregate analytics and individual exposure histories answer different questions.
 
 ## 中文
 
-OAuth 不只是技术握手，它也是一个产品边界：用户决定应用是否可以访问特定范围的数据。
+- API：程序化读取或写入服务资源的接口；
+- OAuth：用户把限定 scope 的访问授权给 app，而不把密码交给 app；
+- consent：用户对具体 data scope 和用途的知情授权；
+- aggregate data：按日、频道、账号或类别汇总后的统计，不等于逐用户 event log。
 
-清晰的 consent 体验应该说明用途、限制范围、避免意外的数据聚合，并让撤销权限变得容易找到。系统应保存这个权限决定作为证据，而不是把它藏在实现细节里。
+YouTube Analytics、Instagram Professional Insights、TikTok Research / Data Portability 的数据边界不同；审批、scope、账号类型和地区要求需要逐个平台核实。
 
-如果产品无法解释会怎样使用数据，正确做法是缩小请求范围或停止。
+### 示例模型
+
+真实 API 是可选 extension；synthetic user simulation 是主实验。不要把 aggregate account analytics 误称为任意用户的 recommendation history。

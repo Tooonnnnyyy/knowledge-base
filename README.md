@@ -1,21 +1,39 @@
-# Tony's Knowledge Garden
+# Connected notes
 
-An English-first public notebook with Chinese translations after the English text. Every published note becomes a graph node; topic membership and explicit note links create visible connections.
+[Open the graph](https://tooonnnnyyy.github.io/tony-knowledge-garden/)
 
-## Content workflow
+The homepage is a full-screen network of articles and topics. Click to read, drag a node to move it, drag the background to pan, and scroll or pinch to zoom. Dragged positions stay on the visitor's device. The graph has keyboard controls and a searchable article index; individual articles also have plain HTML pages.
 
-1. Add or edit a Markdown file in `content/posts/`.
-2. Use the frontmatter fields `title`, `date`, `type`, `tags`, `summary`, and optional `links`.
-3. Run `npm run build` locally, or commit to `main` and let GitHub Actions build and deploy GitHub Pages.
+## Write from a phone or computer
 
-The public repository contains only intentionally public, redacted writing. Do not add Vault exports, private notes, credentials, contact details, or sensitive attachments.
+1. In GitHub, open `content/posts/` and choose **Add file → Create new file**. Or open an existing article and choose **Edit**.
+2. Use a stable English filename, such as `a-question-about-learning.md`, and copy the small header from [the note template](content/new-note.template).
+3. Write the English article first. If the original is Chinese, put the edited Chinese text immediately afterwards under `## 中文`.
+4. Set one or more `tags`. Use `[[another-note-slug|readable label]]` or the `links` list to make an explicit connection.
+5. Commit to `main`. GitHub Actions checks the content, rebuilds the graph and deploys Pages. Confirm the workflow is green; deployment usually takes a few minutes.
 
-## Local commands
+The repository is public. Only put writing you intend to publish here. Keep private drafts, original source snapshots and credentials outside it. The `public: true` field is a publication checklist, not encryption: even unpublished files committed to a public repository remain visible.
 
-```bash
-npm install --no-audit --no-fund
+## How the network grows
+
+- Each reviewed, published Markdown file becomes one article node.
+- Topic tags become topic nodes. [topics.json](content/topics.json) defines the parent/child hierarchy and descriptions. A new tag works immediately; add it there when it needs a parent or description.
+- An explicit wikilink produces a visible connection and a backlink at the destination. Reciprocal links draw only one line.
+- Child-topic membership also counts toward the parent. The graph avoids redundant parent edges and does not invent an article-to-article relationship merely because two articles share a tag.
+- The build generates article HTML, per-article JSON, search text, RSS and a sitemap. Article bodies load only when opened.
+- Content editing, translations and taxonomy decisions remain editorial work. The pipeline updates the graph on every commit; it does not silently publish changes from a private source or pretend to perform ongoing AI curation.
+
+The initial collection was adapted from a locally reviewed knowledge vault. Public articles preserve reusable concepts, worked examples and relevant links. Personal context, raw logs, credentials, private project records and sensitive provenance are excluded. A private source-to-article audit is deliberately kept outside the repository.
+
+## Development
+
+```sh
+npm ci
+npm test
 npm run build
 npm run dev
 ```
 
-The graph data is generated from Markdown during the build. The browser UI is a static Vite site; no database or login is required for readers.
+`src/graph.js` owns layout, coordinates, camera, drawing and gestures. `src/main.js` owns search, selection, URL history and the reading panel. `scripts/build-content.mjs` validates and compiles curated source files. Generated files under `public/articles`, `public/notes`, `public/katex` and `public/data.json` are not hand-edited or committed.
+
+Build failures identify unresolved links, invalid metadata, missing language sections or recognizable private data. Automated scanning is a backstop; review the prose before committing. GitHub Pages serves the output of the tested build rather than a local preview.
