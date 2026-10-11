@@ -1,6 +1,6 @@
-# Connected notes
+# Knowledge Base
 
-[Open the graph](https://tooonnnnyyy.github.io/tony-knowledge-garden/)
+[Open the graph](https://tooonnnnyyy.github.io/knowledge-base/)
 
 The homepage is a full-screen network of articles and topics. Click to read, drag a node to move it, drag the background to pan, and scroll or pinch to zoom. Dragged positions stay on the visitor's device. The graph has keyboard controls and a searchable article index; individual articles also have plain HTML pages.
 

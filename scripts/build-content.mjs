@@ -7,7 +7,7 @@ import katex from 'katex'
 import { articlePage, archivePage } from './reading-template.mjs'
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const origin = 'https://tooonnnnyyy.github.io/tony-knowledge-garden/'
+const origin = 'https://tooonnnnyyy.github.io/knowledge-base/'
 const escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 const unique = (values) => [...new Set(values)]
 
