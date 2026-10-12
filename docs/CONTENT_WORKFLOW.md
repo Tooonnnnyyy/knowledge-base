@@ -1,5 +1,7 @@
 # Knowledge Base content workflow
 
+> **Start here / 从这里开始:** [Bilingual maintenance guide](MAINTENANCE_GUIDE.md) is the short, repeatable version. This document keeps the detailed reference.
+
 This repository is the public source of truth for the Knowledge Base. A small
 change to `content/posts/` can become a new graph node, a new relationship and
 a new article page after GitHub Actions finishes.
