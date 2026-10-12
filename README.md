@@ -6,11 +6,15 @@ The homepage is a full-screen network of articles and topics. Click to read, dra
 
 ## Write from a phone or computer
 
+The complete phone, desktop, media and rollback instructions are in [the content workflow guide](docs/CONTENT_WORKFLOW.md).
+
 1. In GitHub, open `content/posts/` and choose **Add file → Create new file**. Or open an existing article and choose **Edit**.
 2. Use a stable English filename, such as `a-question-about-learning.md`, and copy the small header from [the note template](content/new-note.template).
 3. Write the English article first. If the original is Chinese, put the edited Chinese text immediately afterwards under `## 中文`.
 4. Set one or more `tags`. Use `[[another-note-slug|readable label]]` or the `links` list to make an explicit connection.
 5. Commit to `main`. GitHub Actions checks the content, rebuilds the graph and deploys Pages. Confirm the workflow is green; deployment usually takes a few minutes.
+
+For small images, upload files to `public/media/` and reference them with the stable Pages URL, for example `https://tooonnnnyyy.github.io/knowledge-base/media/example-image.jpg`. For audio and video, prefer a stable public link and check it after deployment. Never publish private recordings, credentials, personal information or raw vault exports.
 
 The repository is public. Only put writing you intend to publish here. Keep private drafts, original source snapshots and credentials outside it. The `public: true` field is a publication checklist, not encryption: even unpublished files committed to a public repository remain visible.
 

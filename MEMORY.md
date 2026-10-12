@@ -32,6 +32,8 @@ This file records the product decisions confirmed for the first public version a
 4. Commit to `main`. GitHub Actions validates content, rebuilds graph data, article pages, RSS, and sitemap, then deploys GitHub Pages.
 5. Verify the workflow and the live Pages URL before describing the change as published. A local preview is only a review artifact.
 
+The step-by-step phone, media and rollback guide is [docs/CONTENT_WORKFLOW.md](docs/CONTENT_WORKFLOW.md). Small images may be uploaded under `public/media/`; use stable Pages URLs in Markdown. Keep audio/video links public and lightweight, and review every media file for privacy before committing.
+
 ## Repository structure
 
 - `src/graph.js`: graph layout, drawing, coordinates, camera, and gestures.
