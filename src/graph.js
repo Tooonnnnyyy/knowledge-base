@@ -1,3 +1,5 @@
+import { edgeSeed, pulseAt, pulseTint } from './edge-motion.js'
+
 const STORAGE_KEY = 'tony-graph-layout-v2'
 const MIN_ZOOM = .12
 const MAX_ZOOM = 2.4
@@ -49,7 +51,7 @@ export class KnowledgeGraph {
       const key = [edge.source, edge.target].sort().join('|')
       if (!seen.has(key) || edge.kind === 'link') seen.set(key, { ...edge, a: this.nodeMap.get(edge.source), b: this.nodeMap.get(edge.target) })
     }
-    this.edges = [...seen.values()]
+    this.edges = [...seen.values()].map((edge) => ({ ...edge, pulseSeed: edgeSeed([edge.source, edge.target].sort().join('|')) }))
     this.neighbors = new Map(this.nodes.map((node) => [node.id, new Set()]))
     this.edges.forEach(({ source, target }) => { this.neighbors.get(source).add(target); this.neighbors.get(target).add(source) })
     this.camera = { x: 0, y: 0, zoom: 1 }
@@ -61,7 +63,11 @@ export class KnowledgeGraph {
     this.animation = null
     this.alpha = 0
     this.destroyed = false
-    this.motionReduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    this.frame = null
+    this.listeners = []
+    this.visible = document.visibilityState !== 'hidden'
+    this.motionQuery = matchMedia('(prefers-reduced-motion: reduce)')
+    this.motionReduced = this.motionQuery.matches
     this.elements = new Map()
     this.createNodes()
     this.resetPositions(true)
@@ -75,6 +81,11 @@ export class KnowledgeGraph {
     this.fit(false)
     this.alpha = this.motionReduced ? 0 : .08
     this.requestDraw()
+  }
+
+  listen(target, type, callback, options) {
+    target.addEventListener(type, callback, options)
+    this.listeners.push(() => target.removeEventListener(type, callback, options))
   }
 
   createNodes() {
@@ -94,15 +105,15 @@ export class KnowledgeGraph {
       label.className = 'node-label'
       label.textContent = node.label
       button.append(dot, label)
-      button.addEventListener('click', (event) => {
+      this.listen(button, 'click', (event) => {
         // Pointer selection is handled at pointerup to distinguish a click from a drag.
         if (event.detail === 0) this.onSelect(node.id)
       })
-      button.addEventListener('mouseenter', () => { this.hovered = node.id; this.requestDraw() })
-      button.addEventListener('mouseleave', () => { this.hovered = null; this.requestDraw() })
-      button.addEventListener('focus', () => { this.hovered = node.id; this.requestDraw() })
-      button.addEventListener('blur', () => { this.hovered = null; this.requestDraw() })
-      button.addEventListener('keydown', (event) => {
+      this.listen(button, 'mouseenter', () => { this.hovered = node.id; this.requestDraw() })
+      this.listen(button, 'mouseleave', () => { this.hovered = null; this.requestDraw() })
+      this.listen(button, 'focus', () => { this.hovered = node.id; this.requestDraw() })
+      this.listen(button, 'blur', () => { this.hovered = null; this.requestDraw() })
+      this.listen(button, 'keydown', (event) => {
         if (!event.altKey || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
         event.preventDefault()
         const offset = event.shiftKey ? 30 : 10
@@ -172,6 +183,7 @@ export class KnowledgeGraph {
   }
 
   resize() {
+    if (this.destroyed) return
     const bounds = this.stage.getBoundingClientRect()
     const previous = { width: this.width, height: this.height }
     this.width = bounds.width
@@ -197,7 +209,7 @@ export class KnowledgeGraph {
   }
 
   bindEvents() {
-    this.stage.addEventListener('pointerdown', (event) => {
+    this.listen(this.stage, 'pointerdown', (event) => {
       if (event.button !== 0 && event.pointerType !== 'touch') return
       event.preventDefault()
       if (this.pointers.size >= 2) return
@@ -217,7 +229,7 @@ export class KnowledgeGraph {
       if (node) { node.dragging = true; node.vx = node.vy = 0; this.gesture.offset = { x: node.x - screenToWorld(point, this.camera).x, y: node.y - screenToWorld(point, this.camera).y } }
       this.stage.classList.add('is-dragging')
     })
-    this.stage.addEventListener('pointermove', (event) => {
+    this.listen(this.stage, 'pointermove', (event) => {
       if (!this.pointers.has(event.pointerId)) return
       const point = this.point(event)
       this.pointers.set(event.pointerId, point)
@@ -265,17 +277,33 @@ export class KnowledgeGraph {
       }
       this.requestDraw()
     }
-    this.stage.addEventListener('pointerup', end)
-    this.stage.addEventListener('pointercancel', end)
-    this.stage.addEventListener('lostpointercapture', end)
-    window.addEventListener('blur', () => {
-      if (this.gesture?.node) { this.gesture.node.dragging = false; this.savePositions() }
-      this.pointers.clear()
-      this.gesture = null
-      this.stage.classList.remove('is-dragging')
-      this.requestDraw()
+    this.listen(this.stage, 'pointerup', end)
+    this.listen(this.stage, 'pointercancel', end)
+    this.listen(this.stage, 'lostpointercapture', end)
+    this.listen(window, 'blur', () => { this.cancelGesture(); this.requestDraw() })
+    this.listen(document, 'visibilitychange', () => {
+      this.visible = document.visibilityState !== 'hidden'
+      if (!this.visible) {
+        this.cancelGesture()
+        if (this.frame) globalThis.cancelAnimationFrame?.(this.frame)
+        this.frame = null
+      } else this.requestDraw()
     })
-    this.stage.addEventListener('wheel', (event) => {
+    const motionChange = () => {
+      this.motionReduced = this.motionQuery.matches
+      if (this.motionReduced) {
+        if (this.animation) this.camera = { ...this.animation.target }
+        this.animation = null
+        this.alpha = 0
+      }
+      this.requestDraw()
+    }
+    if (this.motionQuery.addEventListener) this.listen(this.motionQuery, 'change', motionChange)
+    else if (this.motionQuery.addListener) {
+      this.motionQuery.addListener(motionChange)
+      this.listeners.push(() => this.motionQuery.removeListener(motionChange))
+    }
+    this.listen(this.stage, 'wheel', (event) => {
       event.preventDefault()
       this.animation = null
       const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? this.height : 1)
@@ -283,11 +311,38 @@ export class KnowledgeGraph {
       this.camera = zoomAt(this.camera, this.point(event), this.camera.zoom * factor)
       this.requestDraw()
     }, { passive: false })
-    this.stage.addEventListener('dblclick', (event) => {
+    this.listen(this.stage, 'dblclick', (event) => {
       if (event.target.closest('[data-node]')) return
       this.onBackgroundClick?.()
       this.fit()
     })
+  }
+
+  cancelGesture() {
+    if (this.gesture?.node) { this.gesture.node.dragging = false; this.savePositions() }
+    const pointers = [...this.pointers.keys()]
+    this.pointers.clear()
+    this.gesture = null
+    for (const id of pointers) if (this.stage.hasPointerCapture?.(id)) this.stage.releasePointerCapture?.(id)
+    this.stage.classList.remove('is-dragging')
+  }
+
+  destroy() {
+    if (this.destroyed) return
+    this.destroyed = true
+    if (this.frame) globalThis.cancelAnimationFrame?.(this.frame)
+    this.frame = null
+    this.resizeObserver.disconnect()
+    for (const remove of this.listeners) remove()
+    this.listeners.length = 0
+    this.cancelGesture()
+    this.savePositions()
+    this.animation = null
+    this.alpha = 0
+    this.context.clearRect(0, 0, this.width, this.height)
+    this.layer.replaceChildren()
+    this.elements.clear()
+    delete this.stage.dataset.ready
   }
 
   simulate() {
@@ -414,9 +469,10 @@ export class KnowledgeGraph {
   }
 
   requestDraw() {
-    if (this.frame || this.destroyed) return
+    if (this.frame || this.destroyed || !this.visible || this.paused) return
     this.frame = requestAnimationFrame((time) => {
       this.frame = null
+      if (this.destroyed || !this.visible) return
       if (this.alpha > 0) this.simulate()
       if (this.animation) {
         const progress = clamp((time - this.animation.time) / 360, 0, 1)
@@ -424,12 +480,18 @@ export class KnowledgeGraph {
         for (const key of ['x', 'y', 'zoom']) this.camera[key] = this.animation.start[key] + (this.animation.target[key] - this.animation.start[key]) * ease
         if (progress === 1) this.animation = null
       }
-      this.draw()
-      if (this.alpha || this.animation) this.requestDraw()
+      this.draw(time)
+      if (this.alpha || this.animation || (!this.motionReduced && this.edges.length)) this.requestDraw()
     })
   }
 
-  draw() {
+  setPaused(paused) {
+    this.paused = paused
+    if (paused && this.frame) { globalThis.cancelAnimationFrame?.(this.frame); this.frame = null }
+    if (!paused) this.requestDraw()
+  }
+
+  draw(time = performance.now()) {
     const { context: ctx, camera } = this
     ctx.clearRect(0, 0, this.width, this.height)
     const dark = document.documentElement.dataset.theme === 'dark'
@@ -446,6 +508,7 @@ export class KnowledgeGraph {
       ctx.moveTo(edge.a.x * camera.zoom + camera.x, edge.a.y * camera.zoom + camera.y)
       ctx.lineTo(edge.b.x * camera.zoom + camera.x, edge.b.y * camera.zoom + camera.y)
       ctx.stroke()
+      if (!this.motionReduced) this.drawPulse(edge, time, { dark, connected, faded })
     }
     ctx.globalAlpha = 1
     ctx.setLineDash([])
@@ -478,5 +541,47 @@ export class KnowledgeGraph {
     this.stage.style.setProperty('--grid-y', `${camera.y}px`)
     this.stage.dataset.ready = 'true'
     this.onViewChange?.(Math.round(camera.zoom * 100))
+  }
+
+  drawPulse(edge, time, { dark, connected, faded }) {
+    const { context: ctx, camera } = this
+    // A few DOM test doubles do not implement gradients; static edges remain
+    // fully testable there while real canvas renderers use the complete pulse.
+    if (typeof ctx.createLinearGradient !== 'function') return
+    const dx = edge.b.x - edge.a.x, dy = edge.b.y - edge.a.y
+    const distance = Math.hypot(dx, dy)
+    if (distance < 1) return
+    const directional = edge.kind === 'link'
+    const pulse = pulseAt(time, distance, edge.pulseSeed, directional)
+    if (pulse.opacity <= .001) return
+    const tail = clamp(pulse.t - pulse.direction * pulse.length / distance, 0, 1)
+    const x = (edge.a.x + dx * pulse.t) * camera.zoom + camera.x
+    const y = (edge.a.y + dy * pulse.t) * camera.zoom + camera.y
+    const tailX = (edge.a.x + dx * tail) * camera.zoom + camera.x
+    const tailY = (edge.a.y + dy * tail) * camera.zoom + camera.y
+    if (Math.hypot(x - tailX, y - tailY) < .05) return
+    const tint = pulseTint(edge.a.color, edge.b.color, dark)
+    const gradient = ctx.createLinearGradient(tailX, tailY, x, y)
+    gradient.addColorStop(0, `rgba(${tint},0)`)
+    gradient.addColorStop(.62, `rgba(${tint},.35)`)
+    gradient.addColorStop(1, `rgba(${tint},1)`)
+    const opacity = pulse.opacity * (faded ? .065 : connected ? .85 : dark ? .46 : .36)
+    ctx.setLineDash([])
+    ctx.lineCap = 'round'
+    ctx.strokeStyle = gradient
+    ctx.beginPath()
+    ctx.moveTo(tailX, tailY)
+    ctx.lineTo(x, y)
+    ctx.globalAlpha = opacity * .16
+    ctx.lineWidth = connected ? 4 : 3
+    ctx.stroke()
+    ctx.globalAlpha = opacity
+    ctx.lineWidth = connected ? 1.5 : 1.1
+    ctx.stroke()
+    ctx.fillStyle = `rgb(${tint})`
+    ctx.beginPath()
+    ctx.arc(x, y, connected ? 1.15 : .85, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.lineCap = 'butt'
   }
 }

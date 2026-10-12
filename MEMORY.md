@@ -4,14 +4,14 @@ This file records the product decisions confirmed for the first public version a
 
 ## Confirmed product direction
 
-- The repository is named **Knowledge Base**. The current webpage stays visually and editorially as approved; do not add a visible “Knowledge Base” heading, hero, landing page, slogan, footer, or extra navigation.
+- The repository is named **Knowledge Base**. Preserve the approved graph-first interface through the 3D extension below; do not add a visible “Knowledge Base” heading, hero, landing page, slogan, footer, or extra navigation.
 - The domain opens directly to the full-screen interactive graph. The only primary navigation links are the existing portfolio link and LinkedIn icon.
 - The graph is the homepage: every article and topic is a real accessible node. Clicking opens the reading panel; topics open their hierarchy and notes.
 - Preserve the current warm gray, ink, blue, fine-border, restrained-texture visual language and the current responsive behavior.
 
 ## Interaction contract
 
-- Keep node click and keyboard activation, node dragging, empty-space pan, wheel/touch zoom, fit and reset layout controls, search, URL history, topic filtering, hierarchy breadcrumbs, backlinks, related notes, and light/dark reading states.
+- Keep node click and keyboard activation, node dragging, empty-space navigation, wheel/touch zoom, fit and reset layout controls, search, URL history, topic filtering, hierarchy breadcrumbs, backlinks, related notes, and reading themes.
 - Dragged positions are saved on the visitor’s device. A mobile selection opens as a readable bottom sheet. Static article pages remain available as a fallback.
 - Do not replace the graph with a static list. A list/index may remain an auxiliary way to browse the same nodes.
 
@@ -37,6 +37,8 @@ The step-by-step phone, media and rollback guide is [docs/CONTENT_WORKFLOW.md](d
 ## Repository structure
 
 - `src/graph.js`: graph layout, drawing, coordinates, camera, and gestures.
+- `src/graph-3d.js`: optional WebGL renderer with orbit, pan, zoom, accessible HTML node labels and independent saved positions.
+- `src/edge-motion.js`: transmission speed, direction, fade and category tint shared by both renderers.
 - `src/main.js`: search, selection, URL history, and reading panel.
 - `src/styles.css`: visual tokens and responsive layout.
 - `scripts/build-content.mjs`: validation and generated public content.
@@ -48,3 +50,20 @@ The step-by-step phone, media and rollback guide is [docs/CONTENT_WORKFLOW.md](d
 - Review every new note for sensitive data before committing. Automated privacy checks are a backstop, not a substitute for human review.
 - Do not add credentials, tokens, webhooks, private MCP configuration, raw vault exports, or private audit files.
 - Keep this memory file current when a product contract, content boundary, deployment path, or interaction behavior is explicitly changed. Record the decision and date without adding private source material.
+
+## Approved immersive extension — 2026-10-12
+
+- First-time visitors start in **3D and Dark**; saved preferences take precedence. Keep a one-click **2D/3D** switch in the existing bottom-right toolbar. WebGL initialization failure or context loss falls back to 2D.
+- Keep the graph as the immediate entry view. Preserve the bottom-right controls. The bottom-left index is an icon; its tooltip and accessible label retain note/topic counts.
+- Every visible connection receives the same restrained traveling pulse in either mode: consistent speed, short tapered tail, soft endpoint fade and category tint. No bloom, decorative lightning, arbitrary flashing or unrelated visual effects. Reduced-motion stops autonomous animation.
+- Topic color is defined in `content/topics.json`. Root families use distinct hues; children use related shades; an article inherits its primary tag. Keep hierarchy and labels meaningful without relying only on color.
+- Three reading themes: **Dark**, **Light**, **Paper**. Paper uses a warm beige background, brown ink and a comfortable serif body in full-page reading; it is a palette/readability treatment, not a new homepage design.
+- An article/topic can expand from the side panel to a full-page reader and restore via its toolbar or Escape. Preserve the article DOM, media playback and reading passage when expanding/restoring. Pause media when closing or changing the article.
+- Safe fenced `video` and `audio` blocks support direct public HTTPS media files; normal Markdown images continue to work. The reader gives media a wider column than body text. Raw HTML remains disabled.
+- **Desktop browser usability is the current priority. Dedicated mobile layout, gesture and performance polish is deferred** and must remain in the maintenance backlog. Existing mobile fallback behavior is retained, not newly certified.
+- Technology choices prioritize delivery efficiency and low maintenance. Tailwind CSS or higher-level frameworks are welcome when they save work; they are not a mandatory migration. Continue the existing JavaScript, Three.js and shared CSS tokens for this extension instead of rebuilding the site solely to change frameworks.
+- This round changes presentation and media support, not the approved article corpus. Do not bulk-import a private vault or expose its source mapping.
+
+### Release and recovery boundary
+
+Implementation lives on `feat/immersive-graph` for local review. Do not describe it as visually verified or deployed before browser checks, review and deployment evidence exist. The pre-3D revision is `e314dca22b96b651af7d2696a5faf5f766394087`, tagged `baseline-2d-e314dca` locally. The renderers keep separate layout storage, so switching back to 2D preserves the old arrangement. See [docs/IMMERSIVE_REVIEW.md](docs/IMMERSIVE_REVIEW.md) for verification status and recovery instructions.

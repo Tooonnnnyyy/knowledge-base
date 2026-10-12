@@ -1,7 +1,7 @@
 const escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 
 function shell(title, description, body, depth, canonical = '') {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)}</title><meta name="description" content="${escape(description)}">${canonical ? `<link rel="canonical" href="${canonical}">` : ''}<link rel="stylesheet" href="${depth}reading.css"><link rel="stylesheet" href="${depth}katex/katex.min.css"></head><body><main class="reading-page">${body}</main></body></html>`
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(title)}</title><meta name="description" content="${escape(description)}">${canonical ? `<link rel="canonical" href="${canonical}">` : ''}<link rel="stylesheet" href="${depth}reading.css"><link rel="stylesheet" href="${depth}katex/katex.min.css"><style>.post-content img{display:block;max-width:100%;height:auto;border-radius:6px}.article-media{max-width:100%;margin:28px 0}.article-media video,.article-media audio{display:block;width:100%;max-width:100%;border-radius:6px}.article-media video{height:auto;max-height:75vh;background:#111}.article-media figcaption{margin-top:9px;font-size:13px;line-height:1.6;opacity:.7;overflow-wrap:anywhere}</style></head><body><main class="reading-page">${body}</main></body></html>`
 }
 
 export function articlePage(post, body, posts, origin) {

@@ -97,6 +97,34 @@ function mathPlugin(md) {
   }
 }
 
+function mediaFence(kind, content) {
+  const lines = content.trim().split(/\r?\n/)
+  if (!lines[0] || lines.length > 2) throw new Error(`${kind} block: use an HTTPS media URL and an optional one-line caption`)
+  const raw = lines[0].trim()
+  let url
+  try { url = new URL(raw) } catch { throw new Error(`${kind} block: use a valid public HTTPS media URL`) }
+  const host = url.hostname.toLowerCase()
+  const ipv4 = host.split('.').map(Number)
+  const privateIpv4 = ipv4.length === 4 && ipv4.every(Number.isInteger) && (
+    ipv4[0] === 0 || ipv4[0] === 10 || ipv4[0] === 127 ||
+    (ipv4[0] === 169 && ipv4[1] === 254) || (ipv4[0] === 172 && ipv4[1] >= 16 && ipv4[1] <= 31) ||
+    (ipv4[0] === 192 && ipv4[1] === 168)
+  )
+  const privateHost = !host.includes('.') || /(?:^|\.)(?:localhost|local|internal)$/.test(host) || privateIpv4
+  if (url.protocol !== 'https:' || url.username || url.password || privateHost || /[\s\u0000-\u001f\u007f]/.test(raw)) {
+    throw new Error(`${kind} block: use a public HTTPS URL without credentials`)
+  }
+  const types = kind === 'video'
+    ? { mp4: 'video/mp4', webm: 'video/webm', ogg: 'video/ogg' }
+    : { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg' }
+  const extension = url.pathname.split('.').at(-1).toLowerCase()
+  if (!types[extension]) throw new Error(`${kind} block: use a direct .${Object.keys(types).join(', .')} media URL`)
+  const caption = lines[1]?.trim() || ''
+  const source = escape(url.href)
+  const label = escape(caption || (kind === 'video' ? 'Video recording' : 'Audio recording'))
+  return `<figure class="article-media article-media-${kind}"><${kind} controls${kind === 'video' ? ' playsinline' : ''} preload="metadata" aria-label="${label}"><source src="${source}" type="${types[extension]}"><a href="${source}" target="_blank" rel="noopener noreferrer">Open ${kind}</a></${kind}>${caption ? `<figcaption>${escape(caption)}</figcaption>` : ''}</figure>\n`
+}
+
 export function makeRenderer(posts, { staticPage = false } = {}) {
   const lookup = new Map()
   for (const post of posts) for (const name of [post.slug, post.title, ...post.aliases]) {
@@ -133,6 +161,8 @@ export function makeRenderer(posts, { staticPage = false } = {}) {
   const baseFence = md.renderer.rules.fence
   md.renderer.rules.fence = (tokens, index, options, env, self) => {
     if (/^(?:math|latex|katex)\s*$/.test(tokens[index].info)) return katex.renderToString(tokens[index].content, { displayMode: true, throwOnError: false, trust: false })
+    const kind = tokens[index].info.trim()
+    if (kind === 'video' || kind === 'audio') return mediaFence(kind, tokens[index].content)
     return baseFence(tokens, index, options, env, self)
   }
   md.renderer.rules.table_open = () => '<div class="table-scroll"><table>\n'

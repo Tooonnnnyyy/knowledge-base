@@ -43,6 +43,36 @@ test('rendering supports readable tables, lists, code and math without executing
   assert.match(rendered, /language-js/)
 })
 
+test('media fences render responsive-safe native video and audio with escaped captions and URLs', () => {
+  const { md } = makeRenderer([note('one')])
+  const video = md.render('```video\nhttps://media.example.com/demo.mp4?quality=hd&v=2\nA "demo" <img src=x onerror=alert(1)> & explanation\n```')
+  assert.match(video, /<figure class="article-media article-media-video">/)
+  assert.match(video, /<video controls playsinline preload="metadata"/)
+  assert.match(video, /src="https:\/\/media\.example\.com\/demo\.mp4\?quality=hd&amp;v=2" type="video\/mp4"/)
+  assert.match(video, /<figcaption>A &quot;demo&quot; &lt;img src=x onerror=alert\(1\)&gt; &amp; explanation<\/figcaption>/)
+  assert.match(video, /rel="noopener noreferrer">Open video<\/a>/)
+  assert.doesNotMatch(video, /<img|autoplay/)
+  const audio = md.render('```audio\nhttps://media.example.com/reflection.m4a\nA short reflection.\n```')
+  assert.match(audio, /<audio controls preload="metadata" aria-label="A short reflection\."/)
+  assert.match(audio, /type="audio\/mp4"/)
+  const withoutCaption = md.render('```audio\nhttps://media.example.com/reflection.ogg\n```')
+  assert.match(withoutCaption, /aria-label="Audio recording"/)
+  assert.doesNotMatch(withoutCaption, /<figcaption>/)
+  assert.equal(makeRenderer([note('one')], { staticPage: true }).md.render('```audio\nhttps://media.example.com/reflection.ogg\n```'), withoutCaption)
+})
+
+test('media fences reject unsafe or unsupported sources without enabling raw HTML', () => {
+  const { md } = makeRenderer([note('one')])
+  for (const url of ['javascript:alert(1)', 'data:video/mp4;base64,AAAA', 'http://media.example.com/demo.mp4', 'https://user:password@media.example.com/demo.mp4', 'https://localhost/demo.mp4', 'https://127.0.0.1/demo.mp4', 'https://192.168.1.4/demo.mp4', 'https://media.example.com/watch?id=1', 'https://media.example.com/demo.html', 'https://media.example.com/demo.mp4?x=" onerror="alert(1)']) {
+    assert.throws(() => md.render(`\`\`\`video\n${url}\n\`\`\``), /video block:/)
+  }
+  assert.throws(() => md.render('```audio\nhttps://media.example.com/demo.webm\n```'), /audio block:/)
+  assert.throws(() => md.render('```video\nhttps://media.example.com/demo.mp4\nCaption\nUnexpected extra line\n```'), /one-line caption/)
+  const raw = md.render('<video src="https://media.example.com/demo.mp4" autoplay></video>')
+  assert.match(raw, /&lt;video/)
+  assert.doesNotMatch(raw, /<video/)
+})
+
 test('publication requires explicit public true and English-first text', () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'garden-content-'))
   try {

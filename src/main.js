@@ -1,12 +1,15 @@
 import './styles.css'
 import { KnowledgeGraph } from './graph.js'
+import { KnowledgeGraph3D } from './graph-3d.js'
 
 const app = document.querySelector('#app')
 const topicColors = { AI: '#1f6fe5', Product: '#a68038', Thinking: '#84699a', Engineering: '#64798c', Data: '#6783ad', Research: '#478d80', Systems: '#bd7761', Privacy: '#a46980', Learning: '#a88446', Probability: '#557d98', Simulation: '#a17255', Mathematics: '#866fa3', Design: '#c68372', Agents: '#617fb4' }
 const fallbackColors = ['#1f6fe5', '#688c84', '#a67f57', '#89789e', '#758396', '#b6766c']
-let data, graph, selectedId = null, activeTopic = null, query = ''
+let data, graph, graphMode = '3d', selectedId = null, activeTopic = null, query = ''
 let searchMatches = []
 let lastActiveNode = null
+let readingFullscreen = false
+const themes = ['dark', 'light', 'paper']
 const posts = new Map()
 const nodes = new Map()
 const articleRequests = new Map()
@@ -30,6 +33,11 @@ function icon(name) {
     list: '<path d="M9 6h11M9 12h11M9 18h11M4 6h.1M4 12h.1M4 18h.1"/>',
     back: '<path d="M19 12H5m6-6-6 6 6 6"/>',
     check: '<path d="m5 12 4 4L19 6"/>',
+    expand: '<path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/>',
+    compress: '<path d="M9 4v5H4m16 0h-5V4M9 20v-5H4m16 0h-5v5"/>',
+    cube: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Zm0 0v9m8-4.5-8 4.5m-8-4.5 8 4.5"/>',
+    plane: '<path d="M4 5h16v14H4zM8 9h8M8 13h5M8 17h8"/>',
+    paper: '<path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/>',
   }
   return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.link}</svg>`
 }
@@ -56,10 +64,22 @@ function descendantTopics(topic) {
 function topicPosts(topic) { const descendants = descendantTopics(topic); return data.posts.filter((post) => post.tags.some((tag) => descendants.has(tag))) }
 function topicNodeIds(topic) { return new Set([...descendantTopics(topic)].map((tag) => `topic:${tag}`).concat(topicPosts(topic).map((post) => `post:${post.slug}`))) }
 function topicDetails(topic) { return data.topics?.find((item) => item.label === topic || item.id === topic || item.id === `topic:${topic}`) }
+function themeIcon(theme) { return theme === 'paper' ? 'paper' : theme === 'light' ? 'sun' : 'moon' }
+function updateThemeControl() {
+  const theme = document.documentElement.dataset.theme
+  const next = themes[(themes.indexOf(theme) + 1) % themes.length]
+  const button = document.querySelector('#theme-toggle')
+  button.innerHTML = icon(themeIcon(theme))
+  button.title = `${theme[0].toUpperCase() + theme.slice(1)} · Switch to ${next}`
+  button.setAttribute('aria-label', `Switch to ${next} theme`)
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#191a1a' : theme === 'paper' ? '#d6cbb8' : '#f4f4f3')
+}
 
 function mount() {
   const savedTheme = (() => { try { return localStorage.getItem('tony-graph-theme') } catch { return null } })()
-  document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light'
+  const savedMode = (() => { try { return localStorage.getItem('tony-graph-mode') } catch { return null } })()
+  graphMode = savedMode === '2d' ? '2d' : '3d'
+  document.documentElement.dataset.theme = themes.includes(savedTheme) ? savedTheme : 'dark'
   app.innerHTML = `
     <main class="workspace" aria-label="Connected notes">
       <div class="graph-stage" id="graph-stage" role="group" aria-label="Interactive knowledge graph. Select any node to read. Drag nodes or empty space to move. Use zoom controls to change scale.">
@@ -78,11 +98,11 @@ function mount() {
       </div>
       <div id="filter-state" class="filter-state" hidden></div>
       <div class="bottom-left">
-        <button class="graph-count" id="open-index" aria-label="Browse all ${data.posts.length} notes">${icon('list')}<span>${data.posts.length} notes <span class="count-separator">/</span> ${data.nodes.filter((node) => node.kind === 'topic').length} topics</span></button>
-        <span class="interaction-hint">Drag a node. Follow a connection.</span>
+        <button class="graph-count" id="open-index" aria-label="Browse all ${data.posts.length} notes and ${data.nodes.filter((node) => node.kind === 'topic').length} topics" title="${data.posts.length} notes · ${data.nodes.filter((node) => node.kind === 'topic').length} topics">${icon('list')}<span>${data.posts.length} notes <span class="count-separator">/</span> ${data.nodes.filter((node) => node.kind === 'topic').length} topics</span></button>
       </div>
       <div class="graph-tools" role="toolbar" aria-label="Graph controls">
-        <button class="icon-button" id="theme-toggle" aria-label="Switch color theme" title="Switch color theme">${icon(savedTheme === 'dark' ? 'sun' : 'moon')}</button>
+        <button class="icon-button" id="mode-toggle" aria-label="Switch to ${graphMode === '3d' ? '2D' : '3D'} graph" title="Switch to ${graphMode === '3d' ? '2D' : '3D'} graph">${icon(graphMode === '3d' ? 'plane' : 'cube')}</button>
+        <button class="icon-button" id="theme-toggle" aria-label="Switch color theme" title="Switch color theme">${icon(themeIcon(document.documentElement.dataset.theme))}</button>
         <button class="icon-button" id="help-toggle" aria-label="Graph controls help" aria-expanded="false" title="Graph controls help">${icon('help')}</button>
         <span class="tool-divider"></span>
         <button class="icon-button" id="arrange" aria-label="Reset node layout" title="Reset node layout">${icon('arrange')}</button>
@@ -102,14 +122,72 @@ function mount() {
       <aside id="detail-panel" class="detail-panel" aria-label="Reading panel" hidden></aside>
       <div class="sr-only" id="announcer" role="status" aria-live="polite"></div>
     </main>`
-  graph = new KnowledgeGraph({
-    stage: document.querySelector('#graph-stage'), canvas: document.querySelector('#connections'), layer: document.querySelector('#nodes'),
-    nodes: data.nodes.map((node) => ({ ...node, tags: node.tags || posts.get(node.slug)?.tags || [], color: node.kind === 'topic' ? colorForTopic(node.label) : colorForPost(posts.get(node.slug) || { tags: node.tags }) })),
-    edges: data.edges, onSelect: openNode, onBackgroundClick: () => { if (selectedId || !document.querySelector('#detail-panel').hidden) closePanel(); },
-    onViewChange: (zoom) => { document.querySelector('#zoom-level').textContent = `${zoom}%` },
-  })
+  createGraphRenderer()
+  updateThemeControl()
   bindEvents()
   applyHash()
+}
+
+function rendererOptions() {
+  return {
+    stage: document.querySelector('#graph-stage'), canvas: document.querySelector('#connections'), layer: document.querySelector('#nodes'),
+    nodes: data.nodes.map((node) => ({ ...node, tags: node.tags || posts.get(node.slug)?.tags || [], color: node.kind === 'topic' ? colorForTopic(node.label) : colorForPost(posts.get(node.slug) || { tags: node.tags }) })),
+    edges: data.edges,
+    onSelect: openNode,
+    onBackgroundClick: () => { if (selectedId || !document.querySelector('#detail-panel').hidden) closePanel() },
+    onViewChange: (zoom) => { document.querySelector('#zoom-level').textContent = `${zoom}%` },
+    onFallback: () => switchGraphMode('2d', { persist: true, announce: true }),
+  }
+}
+
+function updateModeControl() {
+  const control = document.querySelector('#mode-toggle')
+  if (!control) return
+  const next = graphMode === '3d' ? '2D' : '3D'
+  control.innerHTML = icon(graphMode === '3d' ? 'cube' : 'plane')
+  control.setAttribute('aria-label', `Switch to ${next} graph`)
+  control.title = `${graphMode.toUpperCase()} view · Switch to ${next}`
+  control.setAttribute('aria-pressed', String(graphMode === '3d'))
+  document.querySelector('#graph-stage').dataset.mode = graphMode
+  document.querySelector('#help dl').innerHTML = `<div><dt>Move a node</dt><dd>Drag it</dd></div>${graphMode === '3d' ? '<div><dt>Orbit</dt><dd>Drag empty space</dd></div><div><dt>Pan</dt><dd>Shift + drag / right drag</dd></div>' : '<div><dt>Move the map</dt><dd>Drag empty space</dd></div>'}<div><dt>Zoom</dt><dd>Scroll or pinch</dd></div><div><dt>Search</dt><dd><kbd>/</kbd></dd></div><div><dt>Fit the map</dt><dd><kbd>F</kbd> or double-click</dd></div><div><dt>Exit full reading</dt><dd><kbd>Esc</kbd></dd></div>`
+  document.querySelector('#help .edge-key').innerHTML = graphMode === '3d' ? '<span><i></i>Links & topic hierarchy</span>' : '<span><i></i>Linked notes & topics</span><span><i class="dashed"></i>Topic hierarchy</span>'
+}
+
+function resetGraphSurface() {
+  const stage = document.querySelector('#graph-stage')
+  stage.innerHTML = '<canvas id="connections" aria-hidden="true"></canvas><div id="nodes" class="node-layer"></div>'
+  stage.removeAttribute('data-ready')
+  stage.removeAttribute('style')
+  stage.classList.remove('is-dragging')
+}
+
+function createGraphRenderer() {
+  resetGraphSurface()
+  try {
+    graph = graphMode === '3d' ? new KnowledgeGraph3D(rendererOptions()) : new KnowledgeGraph(rendererOptions())
+    updateModeControl()
+  } catch (error) {
+    if (graphMode === '3d') {
+      graphMode = '2d'
+      resetGraphSurface()
+      graph = new KnowledgeGraph(rendererOptions())
+      updateModeControl()
+      announce('3D is unavailable here; showing the 2D graph')
+    } else throw error
+  }
+}
+
+function switchGraphMode(mode, { persist = true, announce: shouldAnnounce = false } = {}) {
+  if (mode === graphMode && graph) return
+  graph?.destroy?.()
+  graphMode = mode === '2d' ? '2d' : '3d'
+  createGraphRenderer()
+  if (persist) { try { localStorage.setItem('tony-graph-mode', graphMode) } catch { /* Optional preference. */ } }
+  graph.setSelection(selectedId)
+  if (selectedId) graph.focus(selectedId, Math.min(490, window.innerWidth * .42) + 24)
+  updateHighlights()
+  graph.setPaused?.(readingFullscreen)
+  if (shouldAnnounce) announce(graphMode === '3d' ? '3D graph enabled' : '3D is unavailable here; showing the 2D graph')
 }
 
 function renderSearch() {
@@ -157,6 +235,56 @@ function connectionRows(items, kind = '') {
 }
 function section(label, items, kind) { return items.length ? `<section class="connection-section"><h3>${esc(label)} <span>${items.length}</span></h3>${connectionRows(items, kind)}</section>` : '' }
 
+function panelToolbar(kind, color = null, copy = true) {
+  return `<div class="panel-toolbar"><span class="panel-kind">${color ? `<i style="background:${color}"></i>` : ''}${esc(kind)}</span><div><button class="icon-button reader-theme" data-cycle-theme aria-label="Switch reading theme" title="Switch reading theme">${icon(themeIcon(document.documentElement.dataset.theme))}</button>${copy ? `<button class="icon-button" id="copy-link" aria-label="Copy link to this note" title="Copy link">${icon('link')}</button>` : ''}<button class="icon-button" id="expand-panel" aria-label="${readingFullscreen ? 'Restore side panel' : 'Expand reading panel'}" aria-pressed="${readingFullscreen}" title="${readingFullscreen ? 'Restore side panel · Esc' : 'Full-page reading'}">${icon(readingFullscreen ? 'compress' : 'expand')}</button><button class="icon-button" id="close-panel" aria-label="Close reading panel" title="Close reading panel">${icon('close')}</button></div></div>`
+}
+
+function syncReadingState() {
+  const panel = document.querySelector('#detail-panel')
+  panel.classList.toggle('is-fullscreen', readingFullscreen)
+  panel.setAttribute('role', readingFullscreen ? 'dialog' : 'complementary')
+  if (readingFullscreen) panel.setAttribute('aria-modal', 'true')
+  else panel.removeAttribute('aria-modal')
+  document.querySelector('.workspace').classList.toggle('is-reading', readingFullscreen)
+  for (const element of document.querySelector('.workspace').children) {
+    if (element !== panel && element.id !== 'announcer') element.inert = readingFullscreen
+  }
+  const button = document.querySelector('#expand-panel')
+  if (button) {
+    button.innerHTML = icon(readingFullscreen ? 'compress' : 'expand')
+    button.setAttribute('aria-label', readingFullscreen ? 'Restore side panel' : 'Expand reading panel')
+    button.setAttribute('aria-pressed', String(readingFullscreen))
+    button.title = readingFullscreen ? 'Restore side panel · Esc' : 'Full-page reading'
+  }
+  graph.setPaused?.(readingFullscreen)
+}
+
+function setReadingFullscreen(expanded) {
+  const panel = document.querySelector('#detail-panel')
+  if (panel.hidden && expanded) return
+  const scroller = panel.querySelector('.panel-scroll')
+  const top = scroller?.getBoundingClientRect().top || 0
+  const anchor = [...(scroller?.querySelectorAll('h1, h2, h3, p, li, figure, pre, table') || [])].find((element) => element.getBoundingClientRect().bottom > top + 8)
+  const offset = anchor?.getBoundingClientRect().top
+  readingFullscreen = expanded
+  syncReadingState()
+  // Keep the same passage visible through the change in line length, without
+  // replacing article markup or restarting video/audio playback.
+  if (anchor && scroller) scroller.scrollTop += anchor.getBoundingClientRect().top - offset
+  document.querySelector('#expand-panel')?.focus({ preventScroll: true })
+  announce(expanded ? 'Full-page reading. Press Escape to restore the side panel.' : 'Side panel restored')
+}
+
+function cycleTheme() {
+  const theme = themes[(themes.indexOf(document.documentElement.dataset.theme) + 1) % themes.length]
+  document.documentElement.dataset.theme = theme
+  try { localStorage.setItem('tony-graph-theme', theme) } catch { /* Optional preference. */ }
+  updateThemeControl()
+  document.querySelectorAll('[data-cycle-theme]').forEach((button) => { button.innerHTML = icon(themeIcon(theme)); button.title = `${theme} theme · Switch theme` })
+  graph.requestDraw()
+  announce(`${theme[0].toUpperCase() + theme.slice(1)} theme`)
+}
+
 function renderArticle(post) {
   const outgoing = (post.links || []).map((slug) => posts.get(slug)).filter(Boolean)
   const incoming = data.posts.filter((item) => item.slug !== post.slug && item.links?.includes(post.slug))
@@ -168,7 +296,7 @@ function renderArticle(post) {
   body.innerHTML = post.body
   const firstHeading = body.querySelector('h1,h2')
   if (firstHeading?.textContent === post.title && firstHeading === body.firstElementChild) firstHeading.remove()
-  return `<div class="panel-toolbar"><span class="panel-kind"><i style="background:${colorForPost(post)}"></i>${esc(post.type || 'Note')}</span><div><button class="icon-button" id="copy-link" aria-label="Copy link to this note" title="Copy link">${icon('link')}</button><button class="icon-button" id="close-panel" aria-label="Close reading panel">${icon('close')}</button></div></div>
+  return `${panelToolbar(post.type || 'Note', colorForPost(post))}
     <div class="panel-scroll"><header class="article-header"><div class="article-meta"><time datetime="${esc(post.date)}">${esc(humanDate(post.date))}</time><span>${readingTime} min read</span></div><h1>${esc(post.title)}</h1><p class="article-summary">${esc(post.summary)}</p><div class="article-tags">${post.tags.map((tag) => `<button data-select="topic:${esc(tag)}"><i style="background:${colorForTopic(tag)}"></i>${esc(tag)}</button>`).join('')}</div></header>
     <article class="post-content">${body.innerHTML}</article>
     <div class="article-connections">${section('Links from this note', outgoing, 'Linked from this note')}${section('Linked here', incoming, 'Backlink')}${section('Explore nearby', related)}</div></div>`
@@ -181,7 +309,7 @@ function renderTopic(node) {
   const children = data.nodes.filter((item) => item.kind === 'topic' && (item.parent === node.id || topicDetails(item.label)?.parent?.replace(/^topic:/, '') === node.label))
   const descendants = descendantTopics(node.label)
   const relatedTopics = [...new Set(items.flatMap((post) => post.tags))].filter((tag) => !descendants.has(tag) && tag !== parent)
-  return `<div class="panel-toolbar"><span class="panel-kind"><i style="background:${colorForTopic(node.label)}"></i>Topic</span><div><button class="icon-button" id="copy-link" aria-label="Copy link to this topic" title="Copy link">${icon('link')}</button><button class="icon-button" id="close-panel" aria-label="Close reading panel">${icon('close')}</button></div></div><div class="panel-scroll"><header class="article-header topic-header">${parent ? `<button class="topic-breadcrumb" data-select="topic:${esc(parent)}">${icon('back')}${esc(parent)}</button>` : ''}<div class="topic-symbol" style="--node-color:${colorForTopic(node.label)}">${icon('arrange')}</div><h1>${esc(node.label)}</h1><p class="article-summary">${esc(details?.description || `${items.length} connected ${items.length === 1 ? 'note' : 'notes'}. Follow an idea into its surrounding context.`)}</p><button class="focus-topic" data-focus-topic="${esc(node.label)}">${icon('fit')} Focus this topic</button></header>${children.length ? `<section class="connection-section"><h2>Within this topic</h2><div class="index-topics child-topics">${children.map((child) => `<button data-select="${esc(child.id)}"><i style="background:${colorForTopic(child.label)}"></i>${esc(child.label)}<span>${topicPosts(child.label).length}</span></button>`).join('')}</div></section>` : ''}<section class="connection-section topic-notes"><h2>Notes <span>${items.length}</span></h2>${connectionRows(items)}</section>${relatedTopics.length ? `<section class="connection-section"><h2>Related topics</h2><div class="article-tags">${relatedTopics.map((tag) => `<button data-select="topic:${esc(tag)}"><i style="background:${colorForTopic(tag)}"></i>${esc(tag)}</button>`).join('')}</div></section>` : ''}</div>`
+  return `${panelToolbar('Topic', colorForTopic(node.label))}<div class="panel-scroll"><header class="article-header topic-header">${parent ? `<button class="topic-breadcrumb" data-select="topic:${esc(parent)}">${icon('back')}${esc(parent)}</button>` : ''}<div class="topic-symbol" style="--node-color:${colorForTopic(node.label)}">${icon('arrange')}</div><h1>${esc(node.label)}</h1><p class="article-summary">${esc(details?.description || `${items.length} connected ${items.length === 1 ? 'note' : 'notes'}. Follow an idea into its surrounding context.`)}</p><button class="focus-topic" data-focus-topic="${esc(node.label)}">${icon('fit')} Focus this topic</button></header>${children.length ? `<section class="connection-section"><h2>Within this topic</h2><div class="index-topics child-topics">${children.map((child) => `<button data-select="${esc(child.id)}"><i style="background:${colorForTopic(child.label)}"></i>${esc(child.label)}<span>${topicPosts(child.label).length}</span></button>`).join('')}</div></section>` : ''}<section class="connection-section topic-notes"><h2>Notes <span>${items.length}</span></h2>${connectionRows(items)}</section>${relatedTopics.length ? `<section class="connection-section"><h2>Related topics</h2><div class="article-tags">${relatedTopics.map((tag) => `<button data-select="topic:${esc(tag)}"><i style="background:${colorForTopic(tag)}"></i>${esc(tag)}</button>`).join('')}</div></section>` : ''}</div>`
 }
 
 async function loadArticle(post) {
@@ -203,6 +331,7 @@ async function loadArticle(post) {
 async function openNode(id, { history = true, focus = true } = {}) {
   const node = nodes.get(id)
   if (!node) return
+  pausePanelMedia()
   const version = ++selectionVersion
   selectedId = id
   lastActiveNode = id
@@ -218,8 +347,10 @@ async function openNode(id, { history = true, focus = true } = {}) {
   if (node.kind === 'topic') panel.innerHTML = renderTopic(node)
   else {
     const post = posts.get(node.slug)
-    const toolbar = `<div class="panel-toolbar"><span class="panel-kind">Note</span><button class="icon-button" id="close-panel" aria-label="Close reading panel">${icon('close')}</button></div>`
+    const toolbar = panelToolbar('Note')
     panel.innerHTML = `${toolbar}<div class="panel-scroll"><header class="article-header"><h1>${esc(post.title)}</h1><p class="article-summary">${esc(post.summary)}</p></header><p class="article-loading" role="status">Opening note…</p></div>`
+    syncReadingState()
+    if (readingFullscreen) document.querySelector('#expand-panel')?.focus({ preventScroll: true })
     try {
       await loadArticle(post)
       if (selectedId !== id || selectionVersion !== version) return
@@ -229,12 +360,21 @@ async function openNode(id, { history = true, focus = true } = {}) {
       panel.innerHTML = `${toolbar}<div class="panel-scroll"><header class="article-header"><h1>${esc(post.title)}</h1></header><p class="article-summary">This note could not load. Check your connection and try again.</p><button class="focus-topic" data-retry="${esc(id)}">Try again</button><a class="static-article-link" href="${import.meta.env.BASE_URL}notes/${encodeURIComponent(post.slug)}/">Open readable page ${icon('arrow')}</a></div>`
     }
   }
+  syncReadingState()
+  if (readingFullscreen) document.querySelector('#expand-panel')?.focus({ preventScroll: true })
   announce(`${node.kind === 'topic' ? 'Topic' : 'Note'} opened: ${node.label}`)
 }
 
+function pausePanelMedia() {
+  document.querySelectorAll('#detail-panel video, #detail-panel audio').forEach((media) => media.pause())
+}
+
 function closePanel({ history = true, restoreFocus = false } = {}) {
+  pausePanelMedia()
   selectionVersion++
   selectedId = null
+  readingFullscreen = false
+  syncReadingState()
   graph.setSelection(null)
   document.querySelector('#detail-panel').hidden = true
   document.querySelector('.workspace').classList.remove('has-panel')
@@ -244,6 +384,7 @@ function closePanel({ history = true, restoreFocus = false } = {}) {
 }
 
 function openIndex() {
+  pausePanelMedia()
   window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
   document.title = "All notes · Tony's Field Notes"
   selectionVersion++
@@ -251,9 +392,10 @@ function openIndex() {
   graph.setSelection(null)
   const panel = document.querySelector('#detail-panel')
   const sorted = [...data.posts].sort((a, b) => b.date.localeCompare(a.date) || a.title.localeCompare(b.title))
-  panel.innerHTML = `<div class="panel-toolbar"><span class="panel-kind">All notes · ${sorted.length}</span><button class="icon-button" id="close-panel" aria-label="Close reading panel">${icon('close')}</button></div><div class="panel-scroll index-content"><div class="index-topics">${data.nodes.filter((node) => node.kind === 'topic').map((node) => `<button data-select="${esc(node.id)}"><i style="background:${colorForTopic(node.label)}"></i>${esc(node.label)}<span>${topicPosts(node.label).length}</span></button>`).join('')}</div><div class="index-notes">${connectionRows(sorted)}</div></div>`
+  panel.innerHTML = `${panelToolbar(`${sorted.length} notes · ${data.topics.length} topics`, null, false)}<div class="panel-scroll index-content"><div class="index-topics">${data.nodes.filter((node) => node.kind === 'topic').map((node) => `<button data-select="${esc(node.id)}"><i style="background:${colorForTopic(node.label)}"></i>${esc(node.label)}<span>${topicPosts(node.label).length}</span></button>`).join('')}</div><div class="index-notes">${connectionRows(sorted)}</div></div>`
   panel.hidden = false
   document.querySelector('.workspace').classList.add('has-panel')
+  syncReadingState()
 }
 
 function applyHash() {
@@ -277,19 +419,16 @@ function bindEvents() {
   document.querySelector('#fit').addEventListener('click', () => { closePanel(); graph.fit(); announce('All nodes fit in view') })
   document.querySelector('#arrange').addEventListener('click', () => { closePanel(); activeTopic = null; query = ''; search.value = ''; renderSearch(); graph.arrange(); announce('Node layout reset') })
   document.querySelector('#open-index').addEventListener('click', openIndex)
-  document.querySelector('#theme-toggle').addEventListener('click', (event) => {
-    const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
-    document.documentElement.dataset.theme = theme
-    try { localStorage.setItem('tony-graph-theme', theme) } catch { /* Optional preference. */ }
-    event.currentTarget.innerHTML = icon(theme === 'dark' ? 'sun' : 'moon')
-    graph.requestDraw()
-  })
+  document.querySelector('#mode-toggle').addEventListener('click', () => { switchGraphMode(graphMode === '3d' ? '2d' : '3d'); announce(`${graphMode.toUpperCase()} graph enabled`) })
+  document.querySelector('#theme-toggle').addEventListener('click', cycleTheme)
   document.querySelector('#help-toggle').addEventListener('click', () => {
     const help = document.querySelector('#help')
     help.hidden = !help.hidden
     document.querySelector('#help-toggle').setAttribute('aria-expanded', String(!help.hidden))
   })
   app.addEventListener('click', async (event) => {
+    if (event.target.closest('#expand-panel')) { setReadingFullscreen(!readingFullscreen); return }
+    if (event.target.closest('[data-cycle-theme]')) { cycleTheme(); return }
     const retry = event.target.closest('[data-retry]')
     if (retry) { openNode(retry.dataset.retry, { history: false, focus: false }); return }
     const select = event.target.closest('[data-select]')
@@ -320,8 +459,18 @@ function bindEvents() {
   document.addEventListener('keydown', (event) => {
     const editing = event.target.matches('input, textarea, [contenteditable]')
     if (event.key === 'Escape') {
+      if (readingFullscreen) { event.preventDefault(); setReadingFullscreen(false); return }
       if (!document.querySelector('#search-results').hidden || query) { query = ''; search.value = ''; renderSearch(); search.blur() }
       else { closePanel({ restoreFocus: true }); document.querySelector('#help').hidden = true; document.querySelector('#help-toggle').setAttribute('aria-expanded', 'false') }
+      return
+    }
+    if (readingFullscreen) {
+      if (event.key === 'Tab') {
+        const focusable = [...document.querySelectorAll('#detail-panel button, #detail-panel a[href], #detail-panel video, #detail-panel audio')].filter((element) => element.getClientRects().length)
+        const first = focusable[0], last = focusable.at(-1)
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
+      }
       return
     }
     if (editing || event.metaKey || event.ctrlKey || event.altKey) return

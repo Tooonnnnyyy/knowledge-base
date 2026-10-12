@@ -27,7 +27,7 @@ const bootstrap = `const offlineContent=${payload};const originalFetch=window.fe
 // Vite emits this entry as a self-contained IIFE. A classic script is
 // intentionally used here because Chrome restricts module execution from a
 // local file origin, which previously left the review page blank.
-const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Connected notes — local review</title><style>${style}\n${mathStyle}</style></head><body><div id="app"></div><script>${bootstrap}</script><script>${script.replace(/<\/script/gi, '<\\/script')}</script></body></html>`
+const html = `<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#191a1a"><title>Connected notes — local review</title><style>${style}\n${mathStyle}</style></head><body><div id="app"></div><script>${bootstrap}</script><script>${script.replace(/<\/script/gi, '<\\/script')}</script></body></html>`
 fs.mkdirSync(path.dirname(destination), { recursive: true })
 fs.writeFileSync(destination, html)
 console.log(`Offline review exported: ${destination} (${data.posts.length} articles, ${data.nodes.length} nodes)`)

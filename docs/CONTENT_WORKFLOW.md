@@ -66,6 +66,10 @@ whenever it fits. A tag becomes a topic node in the graph. Add a new topic
 only when several notes will genuinely use it; define its parent and
 description in `topics.json` at the same time.
 
+The topic's `color` supplies its graph and reading-panel color in both 2D and
+3D. Give root subjects distinct hues and subtopics a related shade of their
+parent; notes inherit their first tag's color. No manual graph editing is needed.
+
 Create a relationship only when the article explains a real connection:
 
 ```md
@@ -98,8 +102,42 @@ Reference an image with the stable GitHub Pages URL:
 Use a descriptive alt text. The image is copied into the generated site by
 Vite; it is not a graph node unless the article itself is published.
 
-For audio and video, prefer a stable public URL from a service that is meant
-for embedding. A normal link is the safest first version:
+For an inline video player, paste this block into the article. The first line
+is a **direct HTTPS file URL**; the optional second line is a plain-text caption.
+The player works in both the graph reader and the full article page:
+
+````md
+```video
+https://media.example.com/my-demo.mp4
+A short demonstration of the idea.
+```
+````
+
+For an inline audio player:
+
+````md
+```audio
+https://media.example.com/my-reflection.mp3
+A three-minute reflection, with the transcript below.
+```
+````
+
+Replace the example URL with your real public media file. Supported formats:
+
+- Video: `.mp4`, `.webm`, `.ogg`. MP4 with H.264/AAC is usually the simplest
+  choice across phones and desktop browsers.
+- Audio: `.mp3`, `.m4a`, `.wav`, `.ogg`. MP3 is the simplest general choice.
+
+Use a stable public hosting URL that does not require signing in. Query strings
+are allowed, but avoid private credentials or temporary access tokens. Media
+controls are shown; nothing autoplays. Add a transcript or written description
+below the player, especially when speech or visual details are essential.
+Captions are plain text, so put any Markdown links below the block.
+
+For a very small owned clip, you can upload it to `public/media/` in the same
+way as an image and use its Pages URL. Host larger recordings on a media service
+to keep this repository quick to clone and maintain. A YouTube/Vimeo watch-page
+URL is not a direct media file; keep it as a normal link:
 
 ```md
 [Listen to the audio note](https://example.com/audio-note)
@@ -107,9 +145,11 @@ for embedding. A normal link is the safest first version:
 [Watch the demonstration](https://example.com/video)
 ```
 
-Before relying on an inline player, open the built article and verify it on
-desktop and mobile. Do not upload large media files, copyrighted material,
-private recordings or raw screen captures containing accounts or messages.
+After deployment, open the article, press Play and check the image or player on
+your phone. A file extension alone cannot guarantee that the host allows playback
+or that the video codec works in every browser. Invalid media blocks stop the
+build with a message naming the required URL format. Raw HTML and iframe embeds
+remain disabled; use the two fenced blocks above.
 
 ### 5. Review and commit
 
@@ -145,17 +185,33 @@ local preview.
 
 ## Fixing or rolling back a mistake
 
+For the 3D extension, the graph toolbar has an instant 2D switch. The complete
+pre-3D baseline and safe code recovery steps are recorded in
+[IMMERSIVE_REVIEW.md](IMMERSIVE_REVIEW.md). Switching the renderer does not
+change your posts, and writing/publishing follows the same workflow in both modes.
+
 For a typo, edit the same Markdown file and commit again. Keep its filename and
 slug stable so saved node positions and links continue to work.
 
-For a bad publication or broken asset:
+For a bad edit, the simplest browser-only recovery is:
 
-1. open the offending commit on GitHub;
-2. choose **Revert**;
-3. wait for the new Actions run to deploy; and
-4. verify the live page again.
+1. Open the affected file on GitHub, then choose **History**.
+2. Open a known-good revision and copy that file's earlier content.
+3. Return to the current file on `main`, choose **Edit**, paste the restored
+   content and commit. For a newly added article, delete its file and remove
+   any links to its slug in the same change.
+4. Wait for Actions to deploy, then verify the live page again.
 
-Do not force-push or hand-edit generated files under `dist/` or `public/`.
+GitHub does not provide a **Revert** button for every arbitrary commit. To undo
+one whole commit locally, run `git revert COMMIT_SHA`, resolve any conflicts,
+run the checks, then `git push`. This creates a normal new commit; do not
+force-push. Ask for help if that commit also contains changes you want to keep.
+
+Authored assets under `public/media/` are yours to upload or replace. Generated
+files are different: do not hand-edit `dist/`, `public/data.json`,
+`public/articles/`, `public/notes/`, `public/katex/`, `public/feed.xml` or
+`public/sitemap.xml`. Edit the source article or topic and let the build rebuild
+those outputs.
 
 ## Optional local checks
 

@@ -1,5 +1,10 @@
 import { test, expect } from '@playwright/test'
 
+// Retain the original regression contract for the fully supported 2D view.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('tony-graph-mode', '2d'))
+})
+
 async function ready(page) {
   await page.goto('/')
   await expect(page.locator('#graph-stage')).toHaveAttribute('data-ready', 'true')
