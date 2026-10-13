@@ -68,4 +68,4 @@ The owner-facing bilingual quick entry is [docs/MAINTENANCE_GUIDE.md](docs/MAINT
 
 ### Release and recovery boundary
 
-Implementation lives on `feat/immersive-graph` for local review. Do not describe it as visually verified or deployed before browser checks, review and deployment evidence exist. The pre-3D revision is `e314dca22b96b651af7d2696a5faf5f766394087`, tagged `baseline-2d-e314dca` locally. The renderers keep separate layout storage, so switching back to 2D preserves the old arrangement. See [docs/IMMERSIVE_REVIEW.md](docs/IMMERSIVE_REVIEW.md) for verification status and recovery instructions.
+The approved implementation is on `feat/immersive-graph`; after local browser checks, fast-forward that commit to `main` and verify its matching Pages workflow. The pre-3D revision is `e314dca22b96b651af7d2696a5faf5f766394087`, tagged `baseline-2d-e314dca`. The renderers keep separate layout storage, so switching back to 2D preserves the old arrangement. See [docs/IMMERSIVE_REVIEW.md](docs/IMMERSIVE_REVIEW.md) for recovery instructions.

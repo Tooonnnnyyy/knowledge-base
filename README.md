@@ -2,7 +2,7 @@
 
 [Open the graph](https://tooonnnnyyy.github.io/knowledge-base/)
 
-The homepage is a full-screen network of articles and topics. Click to read, drag a node to move it, drag the background to pan, and scroll or pinch to zoom. Dragged positions stay on the visitor's device. The graph has keyboard controls and a searchable article index; individual articles also have plain HTML pages.
+The homepage is a full-screen network of articles and topics. Click to read, drag a node to move it, and scroll or pinch to zoom. In 3D, drag the background to orbit and Shift-drag to pan; in 2D, drag the background to pan. The toolbar switches between 3D/2D and Dark/Light/Paper themes. Articles can expand into full-page reading. Dragged positions stay on the visitor's device. The graph has keyboard controls and a searchable article index; individual articles also have plain HTML pages.
 
 ## Write from a phone or computer
 

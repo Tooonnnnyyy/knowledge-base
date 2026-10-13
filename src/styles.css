@@ -142,7 +142,7 @@ kbd { padding: 2px 5px; border: 1px solid var(--border); border-bottom-width: 2p
 .index-topics button:hover { border-color: var(--blue); color: var(--blue); }
 .index-topics i { width: 8px; height: 8px; border-radius: 50%; }
 .index-topics span { margin-left: auto; color: var(--muted); font: 9px 'JetBrains Mono', monospace; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: 0s !important; } }
 @media (max-width: 800px) {
   .top-controls { top: 12px; right: 12px; left: 12px; }
   .search-box { width: min(250px, calc(100vw - 123px)); }

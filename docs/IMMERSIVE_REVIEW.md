@@ -37,22 +37,26 @@ system reduced-motion enabled, the connections stay static and navigation works.
   594 kB minified / 154 kB gzip; this is a build warning, not a failed build.
 - Node tests cover content/privacy, fenced media, 2D gestures, 3D CPU geometry
   and shared edge-motion rules. These do not establish WebGL rendering quality.
-- Browser tests are prepared for real node clicks, orbit/pan/zoom, theme
-  persistence, mode switching, full reading and WebGL fallback.
-- Actual Chrome/browser execution is **not verified** for this extension.
-  The sandbox forbids the localhost test listener, and requests to run the
-  isolated Chrome test suite fail before execution because automatic approval
-  review disconnects. The Chrome UI tool is affected by the same service error.
-- Production build and offline export are local artifacts, not deployment or
-  visual approval. No live-site update has been made in this review round.
+- Playwright against installed macOS Chrome completed the full suite:
+  **14/14 passed**. It exercised every 2D and 3D node, 3D orbit/pan/zoom,
+  node dragging and saved layout, mode switching, WebGL initialization and
+  context-loss fallback, all three themes, reduced-motion behavior, and
+  full-page reading with DOM, hash, focus and scroll-anchor preservation.
+- The final browser run had no unexpected console or local-resource errors.
+  The deliberate WebGL failure emits only the expected Three.js diagnostic;
+  the missing favicon request was fixed with `public/favicon.svg`.
+- Production build, offline export and the installed-Chrome suite are local
+  evidence. GitHub Actions and the live Pages URL remain separate deployment
+  checks until the release commit is pushed and its matching workflow succeeds.
 - The offline review contains all 63 articles and 75 nodes. Both embedded
   classic scripts parse, and all article bodies load from the embedded data
   without a network call in a Node VM check. It has not been rendered in Chrome.
 
-When browser access recovers, run `npm run test:browser`, inspect desktop
-screenshots for all three themes, test actual media playback and expand/restore,
-and open the review in Chrome before merging. Do not skip 3D assertions merely
-because a runner silently fell back to 2D; verify WebGL support first.
+For a future release, rerun `npm run test:browser`, inspect desktop screenshots
+for all three themes, test actual owned media playback and expand/restore, and
+verify the matching GitHub Actions run plus live Pages content. Do not skip 3D
+assertions merely because a runner silently fell back to 2D; verify WebGL
+support first.
 
 ## Quick 2D fallback
 

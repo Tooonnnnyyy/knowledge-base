@@ -76,13 +76,18 @@ action executed, saved commit, and next recovery step. Never store credentials.
 
 ## Current evidence / 当前证据
 
-The owner manually opened and accepted the offline 3D preview and authorized
-storing/pushing it. Source `77206d1` and guide `32b2078` are committed locally.
-The latest remote read observed `main` at `e314dca`; later network/API calls
-failed and approval review disconnected before execution. **Push/deployment
-remain unverified; credential expiry is unconfirmed.** This is a dated incident
-record, not a permanent statement about access.
+On 2026-10-12, network access recovered. `gh api user` confirmed `Tooonnnnyyy`,
+the repository API returned `can_push: true`, and `gh auth status` confirmed
+the existing login in the system keyring. No replacement token or new login
+was needed. The feature branch at `55ee7fe` and the original 2D recovery tag
+`baseline-2d-e314dca` were pushed and their remote SHAs verified.
 
-用户已打开并接受本地 3D 预览，授权保存与推送。以上 commit 已在本地；最后一次远程读取
-见到 `main=e314dca`。随后网络/API 失败，审批服务在执行前断开。**未确认推送或部署；
-不能确认凭证过期。**记录日期：2026-10-12，后续以现场检查为准。
+2026-10-12 网络恢复后，API 已确认正确账号及写权限，现有登录保存在系统 keyring；
+无需重登或换 token。功能分支 `55ee7fe` 以及原始 2D 回撤 tag 已推送并核对远程 SHA。
+之前的网络/审批服务故障不能说明凭证过期。每次发布按上面的短流程现场验证，
+不要把这次成功等同于凭证永不过期。
+
+Feature-branch storage and Pages deployment are separate checks. Check the
+latest `main` SHA and its Actions run when publishing; use the live site only
+after its matching deployment succeeds. / 分支保存与 Pages 部署分别验收；
+发布时核对最新 `main` SHA、对应 Actions 和线上页面。

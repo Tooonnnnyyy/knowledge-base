@@ -5,19 +5,20 @@ const runtimeErrors = new WeakMap()
 test.beforeEach(async ({ page }) => {
   const errors = []
   runtimeErrors.set(page, errors)
-  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('pageerror', (error) => errors.push({ text: error.message, url: null }))
   page.on('console', (message) => {
     if (message.type() !== 'error') return
     const externalFont = /^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(message.location().url || '')
     if (externalFont && /Failed to load resource|net::ERR_/.test(message.text())) return
-    errors.push(message.text())
+    errors.push({ text: message.text(), url: message.location().url || null })
   })
 })
 
 test.afterEach(async ({ page }, testInfo) => {
   const errors = runtimeErrors.get(page) || []
   const expectedWebGLFailure = testInfo.title === 'WebGL initialization failure falls back to the supported 2D renderer'
-  const unexpected = expectedWebGLFailure ? errors.filter((error) => error !== 'THREE.WebGLRenderer: Error creating WebGL context.') : errors
+  const expectedDiagnostic = /^(?:THREE\.WebGLRenderer: ){1,2}Error creating WebGL context\.$/
+  const unexpected = expectedWebGLFailure ? errors.filter((error) => !expectedDiagnostic.test(error.text)) : errors
   expect(unexpected, 'Unexpected browser runtime, shader or local resource errors').toEqual([])
 })
 
