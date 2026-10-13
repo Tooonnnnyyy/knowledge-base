@@ -8,6 +8,8 @@ the normal commit-to-main publishing step during this freeze. / **当前线上�
 冻结。**新增工作只保存在 review 分支，明确解除冻结后再恢复下面的正常发布流程。
 See [repository map / 仓库说明](REPOSITORIES.md).
 
+For the Apple UX/UI collection, use the focused [Apple HIG maintenance record](APPLE_HIG_MAINTENANCE.md) for source refreshes, media provenance, dated backups and review-branch release checks. / Apple UX/UI 内容的来源更新、媒体来源、日期备份和 review branch 发布检查，统一参考 [Apple HIG 内容维护记录](APPLE_HIG_MAINTENANCE.md)。
+
 ## 0. The rule / 总规则
 
 **Write one public-safe note → connect it to an existing topic → commit to `main` → wait for Actions → check the live node.**
@@ -30,7 +32,7 @@ Use this for one thought, a study observation or a short daily record. 适合一
 4. Keep `## English` first. If the source is Chinese, put the edited Chinese version immediately after the complete English article under `## 中文`. English-only sources do not need that section. `## English` 必须在前；中文来源在完整英文后紧接整理后的 `## 中文`，纯英文来源无需中文段落。
 5. Choose an existing tag from [`content/topics.json`](../content/topics.json). Prefer one or two meaningful tags; do not create a new topic for one note. 优先选已有 topic，通常一到两个即可；不要为一篇文章随意新建 topic。
 6. Before commit, ask: **Would I be comfortable seeing this in a public portfolio?** If no, remove it or keep it private. commit 前问自己：这段内容公开展示是否舒服？如果不是，删除或留在私下。
-7. Click **Commit changes** directly to `main`. 直接 commit 到 `main`。
+7. During the current live freeze, commit to a review branch such as `review/apple-hig-guide`; after the owner explicitly resumes publication, use `main` according to [REPOSITORIES.md](REPOSITORIES.md). 当前线上冻结期间，提交到 `review/apple-hig-guide` 等 review branch；明确恢复发布后，才按 [REPOSITORIES.md](REPOSITORIES.md) 使用 `main`。
 
 Minimal example / 最小示例（replace the date with your publication date / 日期换成实际发布日期）：
 
