@@ -51,6 +51,12 @@ The owner-facing bilingual quick entry is [docs/MAINTENANCE_GUIDE.md](docs/MAINT
 
 ## Privacy and maintenance guardrails
 
+## Cross-project privacy and consent gate
+
+- From 2026-10-13, every project uses the same privacy gate before public submission. Review prose, filenames, metadata, links, screenshots, images, audio, video, generated output and Git identity; keep personal identifiers, private context, raw conversations/logs, local paths, credentials and unreviewed media out of public output.
+- At the end of each conversation, ask: “这轮内容需要整理进 Obsidian，并将可公开部分同步到个人 Wiki 吗？” Silence is not consent. Obsidian-only approval permits local organization but no push or public update. Combined approval permits only the sanitized, relevant scope and no unrelated UI or project changes.
+- Follow [the public cross-project privacy SOP](docs/CROSS_PROJECT_PRIVACY_SOP.md). Report an exposure by category and location without reproducing the value; do not rewrite public history or frozen deployments without explicit direction.
+
 - Review every new note for sensitive data before committing. Automated privacy checks are a backstop, not a substitute for human review.
 - Do not add credentials, tokens, webhooks, private MCP configuration, raw vault exports, or private audit files.
 - Keep this memory file current when a product contract, content boundary, deployment path, or interaction behavior is explicitly changed. Record the decision and date without adding private source material.
