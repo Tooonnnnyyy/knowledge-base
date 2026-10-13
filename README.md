@@ -4,7 +4,7 @@
 
 This is the canonical repository. The current live version is frozen at
 `6170201`; new work is saved on review branches until deployment is explicitly
-resumed. See the [repository map and publishing boundary](docs/REPOSITORIES.md).
+resumed. See the [repository map and publishing boundary](docs/REPOSITORIES.md) and the [cross-project privacy SOP](docs/CROSS_PROJECT_PRIVACY_SOP.md).
 
 The homepage is a full-screen network of articles and topics. Click to read, drag a node to move it, and scroll or pinch to zoom. In 3D, drag the background to orbit and Shift-drag to pan; in 2D, drag the background to pan. The toolbar switches between 3D/2D and Dark/Light/Paper themes. Articles can expand into full-page reading. Dragged positions stay on the visitor's device. The graph has keyboard controls and a searchable article index; individual articles also have plain HTML pages.
 
@@ -16,7 +16,7 @@ Use the [bilingual maintenance guide](docs/MAINTENANCE_GUIDE.md) as the fastest 
 2. Use a stable English filename, such as `a-question-about-learning.md`, and copy the small header from [the note template](content/new-note.template).
 3. Write the English article first. If the original is Chinese, put the edited Chinese text immediately afterwards under `## 中文`.
 4. Set one or more `tags`. Use `[[another-note-slug|readable label]]` or the `links` list to make an explicit connection.
-5. Commit to `main`. GitHub Actions checks the content, rebuilds the graph and deploys Pages. Confirm the workflow is green; deployment usually takes a few minutes.
+5. Run the [privacy gate](docs/CROSS_PROJECT_PRIVACY_SOP.md). While the live version is frozen, commit to the canonical review branch; after deployment is explicitly resumed, commit to `main`. GitHub Actions then checks the content, rebuilds the graph and deploys Pages. Confirm the workflow is green before calling it published.
 
 For small images, upload files to `public/media/` and reference them with the stable Pages URL, for example `https://tooonnnnyyy.github.io/knowledge-base/media/example-image.jpg`. For audio and video, prefer a stable public link and check it after deployment. Never publish private recordings, credentials, personal information or raw vault exports.
 

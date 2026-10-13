@@ -6,19 +6,21 @@
 work on review branches until the owner resumes publication; do not follow
 the normal commit-to-main publishing step during this freeze. / **当前线上版本
 冻结。**新增工作只保存在 review 分支，明确解除冻结后再恢复下面的正常发布流程。
-See [repository map / 仓库说明](REPOSITORIES.md).
+See [repository map / 仓库说明](REPOSITORIES.md) and the [cross-project privacy SOP / 跨项目隐私 SOP](CROSS_PROJECT_PRIVACY_SOP.md).
 
 ## 0. The rule / 总规则
 
-**Write one public-safe note → connect it to an existing topic → commit to `main` → wait for Actions → check the live node.**
+**Write one public-safe note → connect it to an existing topic → run the privacy gate → use the review branch while live is frozen → wait for Actions after release is resumed → check the live node.**
 
-**写一篇已检查隐私的文章 → 选择已有 topic → commit 到 `main` → 等 Actions 完成 → 检查线上节点。**
+**写一篇已检查隐私的文章 → 选择已有 topic → 执行隐私门禁 → 冻结期间提交 review branch → 恢复发布后等 Actions 完成 → 检查线上节点。**
 
 The site updates from GitHub commits. It does not read your private Obsidian vault automatically. Keep private drafts and raw source material outside this public repository.
 
 网站由 GitHub commit 更新，不会自动读取你的私人 Obsidian vault。私人草稿和原始资料留在仓库之外。
 
 ## 1. Quick capture / 快速记录（推荐，约 3–5 分钟）
+
+Before writing, apply the [cross-project privacy SOP](CROSS_PROJECT_PRIVACY_SOP.md). At the end of each conversation, ask whether the round should be organized in Obsidian and whether its public-safe portion should update the Wiki. / 写入前先执行跨项目隐私 SOP；每轮结束询问是否整理进 Obsidian 及同步可公开部分。
 
 Reading themes / 阅读主题：each visit or page reload shows a small arrow pointing to the bottom-right theme button. Click it to cycle **Dark → Light → Paper**. Close the hint with × or Escape; your chosen theme is remembered, but the hint returns next visit. / 每次进入或刷新，箭头提示右下角主题按钮；点击依次切换深色、浅色、纸质。× 或 Escape 关闭提示。主题选择会保留，下次访问仍会出现说明。
 
@@ -30,7 +32,7 @@ Use this for one thought, a study observation or a short daily record. 适合一
 4. Keep `## English` first. If the source is Chinese, put the edited Chinese version immediately after the complete English article under `## 中文`. English-only sources do not need that section. `## English` 必须在前；中文来源在完整英文后紧接整理后的 `## 中文`，纯英文来源无需中文段落。
 5. Choose an existing tag from [`content/topics.json`](../content/topics.json). Prefer one or two meaningful tags; do not create a new topic for one note. 优先选已有 topic，通常一到两个即可；不要为一篇文章随意新建 topic。
 6. Before commit, ask: **Would I be comfortable seeing this in a public portfolio?** If no, remove it or keep it private. commit 前问自己：这段内容公开展示是否舒服？如果不是，删除或留在私下。
-7. Click **Commit changes** directly to `main`. 直接 commit 到 `main`。
+7. While the live version is frozen, save the change on the canonical review branch. After the owner explicitly resumes deployment, commit to `main`. 线上冻结期间提交到 canonical review branch；用户明确恢复发布后才提交 `main`。
 
 Minimal example / 最小示例（replace the date with your publication date / 日期换成实际发布日期）：
 
