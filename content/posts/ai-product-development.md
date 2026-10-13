@@ -16,6 +16,8 @@ A product development loop begins with an observable user result. Scope and arch
 
 Identify who encounters the problem, in which situation, and what the smallest successful outcome would be. Select a path that can be demonstrated and measured within a short iteration. A vertical slice should connect the user's input to a useful output, rather than completing disconnected layers of a large platform.
 
+[[apple-design-workflow|An Apple-informed design workflow]] expands this step into information architecture, interaction states, prototyping and usability evidence before implementation.
+
 ### 2. Draw the boundaries before coding
 
 A minimal AI flow can be written as: user → interface → input processing → planner or model → validation → user-controlled action → events → storage → feedback. For each step, decide:
@@ -74,6 +76,8 @@ Record which user task completed, which failure the logs can explain, whether mo
 ### 1. 定义一个有用的结果
 
 明确谁在什么情境下遇到什么问题，以及最小成功结果是什么。选择一条能够在较短迭代内演示和测量的路径。Vertical slice 应把用户输入连接到有价值的输出，而不是先完成一个大平台中互相分离的各层。
+
+[[apple-design-workflow|参考 Apple 指南的设计工作流]] 把这一步进一步展开为信息架构、交互状态、原型与可用性证据，让实现有清楚的依据。
 
 ### 2. 写代码前画清边界
 

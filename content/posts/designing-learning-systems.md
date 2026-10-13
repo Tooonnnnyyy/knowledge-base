@@ -34,6 +34,8 @@ A **concept** answers what an idea means. An **architecture** explains how parts
 
 This creates a learning system that can grow one useful connection at a time.
 
+[[apple-design-resources|The Apple design learning path]] is an applied example: official sources connect to focused concept notes, small exercises and explicit design decisions.
+
 ## 中文
 
 ### 把一次有价值的对话变成可检索的知识
@@ -57,3 +59,5 @@ This creates a learning system that can grow one useful connection at a time.
 **概念**回答“是什么”；**架构**解释“如何组织”；**问题**记录“哪里仍不确定”。主题地图把这些角色连接起来，而不是把所有笔记压成同一个层级。
 
 这样，学习系统就可以随着每一条有用的连接持续生长。
+
+[[apple-design-resources|Apple 设计学习路线]] 是一个具体例子：把官方来源连接到聚焦的概念笔记、小练习与明确的设计决策。

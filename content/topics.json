@@ -10,5 +10,6 @@
   { "id": "Recommendation", "label": "Recommendation", "parent": "AI", "color": "#527fb5", "description": "Exposure, preferences and the feedback between a policy and observed behavior." },
   { "id": "Agent systems", "label": "Agent systems", "parent": "AI", "color": "#668bc8", "description": "Delegation, coordination, evaluation and recovery for agents that act." },
   { "id": "Model evaluation", "label": "Model evaluation", "parent": "Data", "color": "#6f9686", "description": "Metrics, thresholds and the limits of evidence from a model or experiment." },
-  { "id": "Knowledge practice", "label": "Knowledge practice", "parent": "Thinking", "color": "#9c81ad", "description": "Capturing, refining and connecting ideas so they can evolve." }
+  { "id": "Knowledge practice", "label": "Knowledge practice", "parent": "Thinking", "color": "#9c81ad", "description": "Capturing, refining and connecting ideas so they can evolve." },
+  { "id": "UX and UI design", "label": "UX and UI design", "parent": "Product", "color": "#b28b49", "description": "Human-centered principles, information architecture, interaction and accessible visual design." }
 ]
