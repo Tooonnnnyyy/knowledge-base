@@ -18,7 +18,7 @@ let selectionVersion = 0
 function icon(name) {
   const paths = {
     search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/>',
-    linkedin: '<path d="M5 9v11M5 5v.1M10 20V9m0 5a3.5 3.5 0 0 1 7 0v6"/>',
+    linkedin: '<circle cx="5" cy="5" r="2"/><path d="M3 9h4v12H3zM10 9h4v1.6c.8-1.2 1.9-1.9 3.4-1.9 3.1 0 4.6 1.9 4.6 5.4V21h-4v-6.3c0-1.7-.6-2.6-1.9-2.6-1.4 0-2.1 1-2.1 2.6V21h-4z"/>',
     arrow: '<path d="M5 12h14m-6-6 6 6-6 6"/>',
     external: '<path d="M14 4h6v6m0-6L10 14M9 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-4"/>',
     close: '<path d="m6 6 12 12M18 6 6 18"/>',
@@ -92,8 +92,8 @@ function mount() {
           <div id="search-results" class="search-results" hidden></div>
         </div>
         <nav class="navigation" aria-label="Primary navigation">
-          <a class="portfolio-link" href="https://jiantaobi.my.canva.site/go" target="_blank" rel="noreferrer">Portfolio ${icon('external')}</a>
-          <a class="icon-button" href="https://www.linkedin.com/in/tony-jiantaobi/" target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn">${icon('linkedin')}</a>
+          <a class="portfolio-link" href="https://jiantaobi.my.canva.site/go" target="_blank" rel="noreferrer" aria-label="View portfolio (opens in a new tab)">View portfolio ${icon('external')}</a>
+          <a class="icon-button linkedin-link" href="https://www.linkedin.com/in/tony-jiantaobi/" target="_blank" rel="noreferrer" aria-label="LinkedIn (opens in a new tab)" title="Connect on LinkedIn">${icon('linkedin')}</a>
         </nav>
       </div>
       <div id="filter-state" class="filter-state" hidden></div>

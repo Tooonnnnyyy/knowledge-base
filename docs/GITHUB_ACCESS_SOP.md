@@ -18,9 +18,16 @@ waiting after 20 seconds. Do not print tokens or credential files. / 在仓库�
 | Network / 网络 | `curl -fsSI --connect-timeout 5 --max-time 10 https://api.github.com` | HTTP response; DNS/TLS/timeout is a connection issue. / 收到响应；DNS、TLS、超时归类为连接问题。 |
 | Identity / 身份 | `gh api user --jq .login` | `Tooonnnnyyy`; never infer expired credentials from a failed connection. / 确认账号；网络失败不能证明 token 过期。 |
 | Repository / 仓库 | `gh api repos/Tooonnnnyyy/knowledge-base --jq '{repository: .full_name, can_push: .permissions.push}'` | Correct repository and `can_push: true`. / 正确仓库且有写入权限。 |
-| Git route / Git 路径 | `git remote get-url --push knowledge-base` | `https://github.com/Tooonnnnyyy/knowledge-base.git`; `origin` is an older repository. / 必须使用 knowledge-base remote。 |
+| Git route / Git 路径 | `git remote get-url --push knowledge-base` | `https://github.com/Tooonnnnyyy/knowledge-base.git`; `legacy-garden` is the older repository. / 必须使用 knowledge-base remote。 |
 
-Before an authorized push, run `git push --dry-run knowledge-base HEAD:main`.
+The live version is frozen at `6170201` by the owner. Until deployment is
+explicitly resumed, save work only on a review branch, for example
+`git push --dry-run knowledge-base HEAD:review/navigation-cta`, followed by
+the same command without `--dry-run`. Do not push `HEAD:main` or dispatch Pages.
+当前线上冻结，新增工作只推 review 分支；不能推主分支或手动触发 Pages。
+
+For a future explicitly authorized deployment, run
+`git push --dry-run knowledge-base HEAD:main` first.
 This checks Git authentication and the proposed ref update without publishing;
 branch protection can still reject a real push. Public `git ls-remote` success
 alone proves neither login nor write access.

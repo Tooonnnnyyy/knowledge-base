@@ -2,6 +2,12 @@
 
 这是以后维护 Knowledge Base 的**唯一快速入口**。/ This is the shortest repeatable workflow for adding and maintaining the Knowledge Base.
 
+**Current owner instruction: preserve the live site at `6170201`.** Save new
+work on review branches until the owner resumes publication; do not follow
+the normal commit-to-main publishing step during this freeze. / **当前线上版本
+冻结。**新增工作只保存在 review 分支，明确解除冻结后再恢复下面的正常发布流程。
+See [repository map / 仓库说明](REPOSITORIES.md).
+
 ## 0. The rule / 总规则
 
 **Write one public-safe note → connect it to an existing topic → commit to `main` → wait for Actions → check the live node.**

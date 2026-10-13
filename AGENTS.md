@@ -32,7 +32,8 @@
 ## GitHub connection and publishing SOP
 
 - Follow `docs/GITHUB_ACCESS_SOP.md` before remote publishing. Budget at most two minutes to diagnose access: network → authenticated identity → repository permission → correct remote. Reuse saved authentication; do not require a new login every session.
-- Publishing remote is `knowledge-base`, repository `Tooonnnnyyy/knowledge-base`. `origin` points to an older repository. Verify remote changes before pushing; never force-push.
+- Canonical remote is `knowledge-base`, repository `Tooonnnnyyy/knowledge-base`. The older repository is named `legacy-garden` locally; `remote.pushDefault` is `knowledge-base`. Verify URLs and remote changes before pushing; never force-push.
+- The owner froze the live website at `6170201` on 2026-10-12 after the theme-guide release. Save subsequent work on review branches in the canonical repository. Do not push to `main`, merge, or manually dispatch Pages until the owner explicitly unfreezes deployment. See `docs/REPOSITORIES.md`.
 - A network failure can make `gh auth status` misleading. Do not claim credentials expired unless an authenticated API returns an authentication failure over a working connection.
 - If automatic approval review fails before execution, record that the action did not run. Stop identical retries without new evidence; do not bypass review or ask again for authorization already given. Finish and commit unaffected local work.
 - After recovery, finish the pending authorized push, compare remote SHA, and verify Actions plus live Pages separately. Keep tokens out of files, output and public documentation.
