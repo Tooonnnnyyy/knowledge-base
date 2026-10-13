@@ -34,6 +34,8 @@ This file records the product decisions confirmed for the first public version a
 
 The step-by-step phone, media and rollback guide is [docs/CONTENT_WORKFLOW.md](docs/CONTENT_WORKFLOW.md). Small images may be uploaded under `public/media/`; use stable Pages URLs in Markdown. Keep audio/video links public and lightweight, and review every media file for privacy before committing.
 
+The owner-facing bilingual quick entry is [docs/MAINTENANCE_GUIDE.md](docs/MAINTENANCE_GUIDE.md). GitHub access uses [docs/GITHUB_ACCESS_SOP.md](docs/GITHUB_ACCESS_SOP.md): reuse the saved login, diagnose within two minutes, distinguish network from authentication failure, and stop identical blocked retries. The user explicitly wants this behavior across maintenance sessions.
+
 ## Repository structure
 
 - `src/graph.js`: graph layout, drawing, coordinates, camera, and gestures.

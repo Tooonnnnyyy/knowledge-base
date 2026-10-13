@@ -28,3 +28,11 @@
 - Generated output is ignored; do not edit it by hand.
 - Run `npm test`, `npm run build`, and `npm run test:browser` before publishing interaction changes. Browser tests use a separate profile. Distinguish passed checks from blocked/unrun checks.
 - Verify deployment and the live site before claiming it is updated. If browser or hosting access fails, create a local review using `node scripts/export-review.mjs`, report the blocker precisely and do not claim visual approval.
+
+## GitHub connection and publishing SOP
+
+- Follow `docs/GITHUB_ACCESS_SOP.md` before remote publishing. Budget at most two minutes to diagnose access: network → authenticated identity → repository permission → correct remote. Reuse saved authentication; do not require a new login every session.
+- Publishing remote is `knowledge-base`, repository `Tooonnnnyyy/knowledge-base`. `origin` points to an older repository. Verify remote changes before pushing; never force-push.
+- A network failure can make `gh auth status` misleading. Do not claim credentials expired unless an authenticated API returns an authentication failure over a working connection.
+- If automatic approval review fails before execution, record that the action did not run. Stop identical retries without new evidence; do not bypass review or ask again for authorization already given. Finish and commit unaffected local work.
+- After recovery, finish the pending authorized push, compare remote SHA, and verify Actions plus live Pages separately. Keep tokens out of files, output and public documentation.

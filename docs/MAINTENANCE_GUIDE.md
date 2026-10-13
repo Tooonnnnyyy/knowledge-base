@@ -19,12 +19,12 @@ Use this for one thought, a study observation or a short daily record. 适合一
 1. Open GitHub → `content/posts/` → **Add file → Create new file**. 在 GitHub 打开 `content/posts/`，点击 **Add file → Create new file**。
 2. Name the file in stable English kebab case, for example `a-question-about-agents.md`. 文件名使用稳定的英文 kebab-case。
 3. Copy [`content/new-note.template`](../content/new-note.template), then replace the title, date, summary, tags and body. 复制模板，替换标题、日期、摘要、标签和正文。
-4. Keep `## English` first. Add `## 中文` immediately after the complete English version only when you want to publish Chinese too. `## English` 必须在前；需要中文时，把完整英文写完后紧接 `## 中文`。
+4. Keep `## English` first. If the source is Chinese, put the edited Chinese version immediately after the complete English article under `## 中文`. English-only sources do not need that section. `## English` 必须在前；中文来源在完整英文后紧接整理后的 `## 中文`，纯英文来源无需中文段落。
 5. Choose an existing tag from [`content/topics.json`](../content/topics.json). Prefer one or two meaningful tags; do not create a new topic for one note. 优先选已有 topic，通常一到两个即可；不要为一篇文章随意新建 topic。
 6. Before commit, ask: **Would I be comfortable seeing this in a public portfolio?** If no, remove it or keep it private. commit 前问自己：这段内容公开展示是否舒服？如果不是，删除或留在私下。
 7. Click **Commit changes** directly to `main`. 直接 commit 到 `main`。
 
-Minimal example / 最小示例：
+Minimal example / 最小示例（replace the date with your publication date / 日期换成实际发布日期）：
 
 ~~~yaml
 ---
@@ -118,12 +118,14 @@ Do not force-push or hand-edit generated `dist/`, `public/data.json`, `public/ar
 
 ## 7. Simple workflow evaluation / 流程评估
 
+This is a walkthrough estimate, not a timed usability study. The 3–5 minute estimate assumes a short draft is already written and excludes translation, media hosting and deployment waiting. / 以下为流程推演，不是实测；3–5 分钟只针对已写好的短文，翻译、媒体托管和部署等待另计。
+
 | Task | Steps | Maintenance load |
 | --- | ---: | --- |
 | Short thought | 7 | Low / 低 |
 | Long bilingual article | 7 + writing | Medium / 中 |
 | Add image | 1 upload + 1 Markdown line | Low / 低 |
-| Add audio/video | 1 public URL block | Low / 低 |
+| Add audio/video | 1 public URL block after hosting | Low with an existing URL; medium if uploading first / 已有直链低，否则中 |
 | New category | 1 topic config entry | Medium / 中 |
 | Roll back a typo | History → edit → commit | Low / 低 |
 
@@ -143,5 +145,11 @@ The deliberate tradeoff is one manual privacy check before every commit. It keep
 [ ] Actions green / Actions 变绿
 [ ] Check node on Pages / 在线点开节点
 ~~~
+
+## GitHub access problems / GitHub 连接异常
+
+Follow the [two-minute GitHub connection SOP](GITHUB_ACCESS_SOP.md): network → identity → repository permission → push. Reuse the saved login; do not repeatedly sign in or assume an expired token when the network is blocked.
+
+连接异常按 SOP 两分钟定位：网络 → 身份 → 仓库权限 → 推送。复用已有认证；同样的错误不反复尝试，网络失败不等于 token 过期。日常 GitHub 网页写作仍按上面的短流程。
 
 For the longer explanation, see [`CONTENT_WORKFLOW.md`](CONTENT_WORKFLOW.md). 如需完整说明，继续阅读 `CONTENT_WORKFLOW.md`。
