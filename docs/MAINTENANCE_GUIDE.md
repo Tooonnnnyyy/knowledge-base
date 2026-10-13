@@ -14,6 +14,8 @@ The site updates from GitHub commits. It does not read your private Obsidian vau
 
 ## 1. Quick capture / 快速记录（推荐，约 3–5 分钟）
 
+Reading themes / 阅读主题：each visit or page reload shows a small arrow pointing to the bottom-right theme button. Click it to cycle **Dark → Light → Paper**. Close the hint with × or Escape; your chosen theme is remembered, but the hint returns next visit. / 每次进入或刷新，箭头提示右下角主题按钮；点击依次切换深色、浅色、纸质。× 或 Escape 关闭提示。主题选择会保留，下次访问仍会出现说明。
+
 Use this for one thought, a study observation or a short daily record. 适合一个想法、学习记录或短篇日常思考。
 
 1. Open GitHub → `content/posts/` → **Add file → Create new file**. 在 GitHub 打开 `content/posts/`，点击 **Add file → Create new file**。

@@ -91,3 +91,8 @@ Feature-branch storage and Pages deployment are separate checks. Check the
 latest `main` SHA and its Actions run when publishing; use the live site only
 after its matching deployment succeeds. / 分支保存与 Pages 部署分别验收；
 发布时核对最新 `main` SHA、对应 Actions 和线上页面。
+
+The immersive release `2c4edc5` was also pushed to `main`. Its
+[Actions run](https://github.com/Tooonnnnyyy/knowledge-base/actions/runs/38336528965)
+passed build and deployment; the live JS/CSS files and Chrome interaction were
+verified. / 3D 版本已成功推入主分支，构建与部署均通过，线上资源和 Chrome 交互已核验。

@@ -102,7 +102,15 @@ function mount() {
       </div>
       <div class="graph-tools" role="toolbar" aria-label="Graph controls">
         <button class="icon-button" id="mode-toggle" aria-label="Switch to ${graphMode === '3d' ? '2D' : '3D'} graph" title="Switch to ${graphMode === '3d' ? '2D' : '3D'} graph">${icon(graphMode === '3d' ? 'plane' : 'cube')}</button>
-        <button class="icon-button" id="theme-toggle" aria-label="Switch color theme" title="Switch color theme">${icon(themeIcon(document.documentElement.dataset.theme))}</button>
+        <div class="theme-control">
+          <button class="icon-button" id="theme-toggle" aria-label="Switch color theme" title="Switch color theme">${icon(themeIcon(document.documentElement.dataset.theme))}</button>
+          <section class="theme-tip" id="theme-tip" aria-label="Reading theme guide" hidden>
+            <button class="theme-tip-close" id="dismiss-theme-tip" aria-label="Dismiss theme tip">${icon('close')}</button>
+            <h2>Switch reading themes</h2>
+            <p id="theme-tip-description">Click the highlighted icon below to cycle between Dark, Light and Paper.</p>
+            <div class="theme-tip-options" aria-hidden="true"><span><i class="theme-swatch-dark"></i>Dark</span><span><i class="theme-swatch-light"></i>Light</span><span><i class="theme-swatch-paper"></i>Paper</span></div>
+          </section>
+        </div>
         <button class="icon-button" id="help-toggle" aria-label="Graph controls help" aria-expanded="false" title="Graph controls help">${icon('help')}</button>
         <span class="tool-divider"></span>
         <button class="icon-button" id="arrange" aria-label="Reset node layout" title="Reset node layout">${icon('arrange')}</button>
@@ -126,6 +134,21 @@ function mount() {
   updateThemeControl()
   bindEvents()
   applyHash()
+  showThemeTip()
+}
+
+function showThemeTip() {
+  document.querySelector('#theme-tip').hidden = false
+  document.querySelector('#theme-toggle').setAttribute('aria-describedby', 'theme-tip-description')
+}
+
+function dismissThemeTip({ restoreFocus = false } = {}) {
+  const tip = document.querySelector('#theme-tip')
+  if (!tip || tip.hidden) return
+  tip.hidden = true
+  const button = document.querySelector('#theme-toggle')
+  button.removeAttribute('aria-describedby')
+  if (restoreFocus) button.focus({ preventScroll: true })
 }
 
 function rendererOptions() {
@@ -276,6 +299,7 @@ function setReadingFullscreen(expanded) {
 }
 
 function cycleTheme() {
+  dismissThemeTip()
   const theme = themes[(themes.indexOf(document.documentElement.dataset.theme) + 1) % themes.length]
   document.documentElement.dataset.theme = theme
   try { localStorage.setItem('tony-graph-theme', theme) } catch { /* Optional preference. */ }
@@ -331,6 +355,7 @@ async function loadArticle(post) {
 async function openNode(id, { history = true, focus = true } = {}) {
   const node = nodes.get(id)
   if (!node) return
+  dismissThemeTip()
   pausePanelMedia()
   const version = ++selectionVersion
   selectedId = id
@@ -384,6 +409,7 @@ function closePanel({ history = true, restoreFocus = false } = {}) {
 }
 
 function openIndex() {
+  dismissThemeTip()
   pausePanelMedia()
   window.history.pushState(null, '', `${window.location.pathname}${window.location.search}`)
   document.title = "All notes · Tony's Field Notes"
@@ -421,7 +447,9 @@ function bindEvents() {
   document.querySelector('#open-index').addEventListener('click', openIndex)
   document.querySelector('#mode-toggle').addEventListener('click', () => { switchGraphMode(graphMode === '3d' ? '2d' : '3d'); announce(`${graphMode.toUpperCase()} graph enabled`) })
   document.querySelector('#theme-toggle').addEventListener('click', cycleTheme)
+  document.querySelector('#dismiss-theme-tip').addEventListener('click', () => dismissThemeTip({ restoreFocus: true }))
   document.querySelector('#help-toggle').addEventListener('click', () => {
+    dismissThemeTip()
     const help = document.querySelector('#help')
     help.hidden = !help.hidden
     document.querySelector('#help-toggle').setAttribute('aria-expanded', String(!help.hidden))
@@ -459,6 +487,7 @@ function bindEvents() {
   document.addEventListener('keydown', (event) => {
     const editing = event.target.matches('input, textarea, [contenteditable]')
     if (event.key === 'Escape') {
+      if (!document.querySelector('#theme-tip').hidden) { event.preventDefault(); dismissThemeTip({ restoreFocus: Boolean(event.target.closest('#theme-tip')) }); return }
       if (readingFullscreen) { event.preventDefault(); setReadingFullscreen(false); return }
       if (!document.querySelector('#search-results').hidden || query) { query = ''; search.value = ''; renderSearch(); search.blur() }
       else { closePanel({ restoreFocus: true }); document.querySelector('#help').hidden = true; document.querySelector('#help-toggle').setAttribute('aria-expanded', 'false') }

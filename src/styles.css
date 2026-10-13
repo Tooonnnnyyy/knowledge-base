@@ -81,6 +81,21 @@ kbd { padding: 2px 5px; border: 1px solid var(--border); border-bottom-width: 2p
 .graph-tools .icon-button { width: 29px; height: 29px; border: 0; box-shadow: none; background: transparent; }
 .graph-tools .icon-button:hover { background: var(--blue-soft); }
 .graph-tools output { min-width: 42px; color: var(--muted); font: 10px 'JetBrains Mono', monospace; text-align: center; }
+.theme-control { position: relative; display: flex; }
+.theme-control > [aria-describedby] { outline: 1px solid var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.theme-tip { position: absolute; z-index: 1; bottom: calc(100% + 19px); left: -32px; width: 260px; padding: 18px; border: 1px solid var(--border); border-radius: 8px; color: var(--ink); background: var(--surface-strong); box-shadow: var(--shadow); cursor: default; }
+.theme-tip::after { position: absolute; bottom: -7px; left: 39px; width: 12px; height: 12px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface-strong); transform: rotate(45deg); content: ''; pointer-events: none; }
+.theme-tip h2 { margin: 0 20px 8px 0; font-size: 13px; font-weight: 600; line-height: 1.4; letter-spacing: -.01em; }
+.theme-tip p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.theme-tip-close { position: absolute; top: 10px; right: 9px; display: grid; place-items: center; width: 27px; height: 27px; padding: 0; border: 0; border-radius: 4px; color: var(--muted); background: transparent; }
+.theme-tip-close svg { width: 13px; height: 13px; }
+.theme-tip-close:hover, .theme-tip-close:focus-visible { outline: 1px solid var(--blue); color: var(--ink); background: var(--blue-soft); }
+.theme-tip-options { display: flex; gap: 16px; margin-top: 14px; font-size: 11px; }
+.theme-tip-options span { display: inline-flex; align-items: center; gap: 5px; }
+.theme-tip-options i { width: 11px; height: 11px; border: 1px solid var(--border); border-radius: 50%; }
+.theme-swatch-dark { background: #191a1a; }
+.theme-swatch-light { background: #f4f4f3; }
+.theme-swatch-paper { background: #e6ddcb; }
 .tool-divider { width: 1px; height: 17px; margin: 0 2px; background: var(--border); }
 .help-popover { position: absolute; z-index: 25; right: 22px; bottom: 72px; width: min(330px, calc(100vw - 44px)); padding: 18px; border: 1px solid var(--border); border-radius: 7px; color: var(--ink); background: var(--surface-strong); box-shadow: var(--shadow); }
 .help-popover h2 { margin: 0 0 7px; font-size: 15px; letter-spacing: -.02em; }

@@ -21,6 +21,7 @@ testing are explicitly deferred. No additional private vault material is importe
 | Click a node / Tab then Enter | Open the article or topic |
 | Cube/plane icon | Switch 3D/2D without losing the open article |
 | Moon/sun/paper icon | Cycle Dark → Light → Paper; remember choice |
+| Theme guide on every page load | Arrow points at the theme icon; click icon, × or Escape to dismiss for this visit |
 | Expand icon in reading toolbar | Full-page reading with a wider media column |
 | Restore icon / Escape in full reading | Restore the sidebar at the same passage |
 | Index icon, bottom-left | Browse all notes and topics; counts in tooltip |
@@ -45,12 +46,23 @@ system reduced-motion enabled, the connections stay static and navigation works.
 - The final browser run had no unexpected console or local-resource errors.
   The deliberate WebGL failure emits only the expected Three.js diagnostic;
   the missing favicon request was fixed with `public/favicon.svg`.
-- Production build, offline export and the installed-Chrome suite are local
-  evidence. GitHub Actions and the live Pages URL remain separate deployment
-  checks until the release commit is pushed and its matching workflow succeeds.
+- The immersive release `2c4edc5` is published on `main`; its
+  [Actions run](https://github.com/Tooonnnnyyy/knowledge-base/actions/runs/38336528965)
+  passed the Linux tests/build/browser suite and Pages deployment. The live
+  HTML matched the built JS/CSS filenames, and live Chrome verified 75 nodes,
+  all three themes and full-page reading with no console errors.
+- The subsequently requested theme guide passed the full local suite, including
+  dismissal, saved-theme preservation, and reappearance after each page reload.
+  Desktop screenshots confirmed arrow alignment in Dark, Light and Paper.
 - The offline review contains all 63 articles and 75 nodes. Both embedded
   classic scripts parse, and all article bodies load from the embedded data
-  without a network call in a Node VM check. It has not been rendered in Chrome.
+  without a network call in a Node VM check. The owner manually opened and
+  accepted the 3D preview before authorizing release.
+- Browser plugin not available: validation used the repository Playwright suite
+  with installed Chrome at 1440 × 960 and the retained 390 × 844 2D fallback
+  test. The Chrome extension reported `unsupported Codex auth method: apikey`;
+  system opening and native Chrome window inspection successfully confirmed
+  the live site in the owner's browser. Dedicated mobile polish is deferred.
 
 For a future release, rerun `npm run test:browser`, inspect desktop screenshots
 for all three themes, test actual owned media playback and expand/restore, and
@@ -71,14 +83,13 @@ The untouched pre-3D baseline is:
 
 ```text
 e314dca22b96b651af7d2696a5faf5f766394087
-local tag: baseline-2d-e314dca
+local and remote tag: baseline-2d-e314dca
 feature branch: feat/immersive-graph
 publishing remote: knowledge-base
 ```
 
-Before merge, production remains on the approved version. Keep the feature
-branch separate while reviewing. To inspect the old source without discarding
-new work, create a separate worktree:
+The baseline tag is retained on GitHub. To inspect the old source without
+discarding new work, create a separate worktree:
 
 ```sh
 git worktree add ../knowledge-base-2d-baseline baseline-2d-e314dca
@@ -93,7 +104,6 @@ Preserve later article changes when restoring presentation code.
 
 ## Maintenance backlog
 
-- Complete desktop browser and visual acceptance before release.
 - Test actual owned video/audio with pause, seek, expand, restore and close.
 - Then adapt mobile controls, portrait/landscape reading and touch gestures.
 - Measure rendering performance on ordinary desktop and mobile GPUs with a
