@@ -4,6 +4,8 @@ This file records the product decisions confirmed for the first public version a
 
 ## Confirmed product direction
 
+- **Current live version frozen:** the owner asked to preserve the deployed site at `6170201` after the theme-guide release. Further changes are allowed only as review work until deployment is explicitly resumed. All work stays in `Tooonnnnyyy/knowledge-base`; never publish review changes automatically. The separate `tony-knowledge-garden` repository is obsolete. See [repository map](docs/REPOSITORIES.md).
+
 - The repository is named **Knowledge Base**. Preserve the approved graph-first interface through the 3D extension below; do not add a visible “Knowledge Base” heading, hero, landing page, slogan, footer, or extra navigation.
 - The domain opens directly to the full-screen interactive graph. The only primary navigation links are the existing portfolio link and LinkedIn icon.
 - The graph is the homepage: every article and topic is a real accessible node. Clicking opens the reading panel; topics open their hierarchy and notes.

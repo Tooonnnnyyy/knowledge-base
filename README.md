@@ -2,6 +2,10 @@
 
 [Open the graph](https://tooonnnnyyy.github.io/knowledge-base/)
 
+This is the canonical repository. The current live version is frozen at
+`6170201`; new work is saved on review branches until deployment is explicitly
+resumed. See the [repository map and publishing boundary](docs/REPOSITORIES.md).
+
 The homepage is a full-screen network of articles and topics. Click to read, drag a node to move it, and scroll or pinch to zoom. In 3D, drag the background to orbit and Shift-drag to pan; in 2D, drag the background to pan. The toolbar switches between 3D/2D and Dark/Light/Paper themes. Articles can expand into full-page reading. Dragged positions stay on the visitor's device. The graph has keyboard controls and a searchable article index; individual articles also have plain HTML pages.
 
 ## Write from a phone or computer
