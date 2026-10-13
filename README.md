@@ -10,7 +10,7 @@ The homepage is a full-screen network of articles and topics. Click to read, dra
 
 ## Write from a phone or computer
 
-Use the [bilingual maintenance guide](docs/MAINTENANCE_GUIDE.md) as the fastest repeatable workflow. The longer phone, desktop, media and rollback explanation is in [the content workflow guide](docs/CONTENT_WORKFLOW.md).
+Use the [bilingual maintenance guide](docs/MAINTENANCE_GUIDE.md) as the fastest repeatable workflow. Apple UX/UI updates also follow the [Apple HIG maintenance record](docs/APPLE_HIG_MAINTENANCE.md), which records source refreshes, media provenance, backups and the review-branch release boundary. The longer phone, desktop, media and rollback explanation is in [the content workflow guide](docs/CONTENT_WORKFLOW.md).
 
 1. In GitHub, open `content/posts/` and choose **Add file → Create new file**. Or open an existing article and choose **Edit**.
 2. Use a stable English filename, such as `a-question-about-learning.md`, and copy the small header from [the note template](content/new-note.template).
